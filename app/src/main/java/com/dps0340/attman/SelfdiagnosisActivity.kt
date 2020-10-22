@@ -110,19 +110,6 @@ class SelfdiagnosisActivity : AppCompatActivity() {
         }
     }
 
-//    private fun dispatchTakePictureIntent(callback: Intent) {
-//        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-//        try {
-//            // asynchronous, non-blocking 상태
-//            // 수정 TODO
-//            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
-//            startActivity(callback)
-//        } catch (e: ActivityNotFoundException) {
-//            Log.e("ActivityNotFound", "ActivityNotFoundException!!")
-//            // display error state to the user
-//        }
-//    }
-
     fun call() {
         for (i in flags.indices) {
             if (flags[i] != 2) {
