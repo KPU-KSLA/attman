@@ -20,6 +20,7 @@ class ResultActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
+        markDiagnosed()
         tv_name = findViewById(R.id.tv_name7)
         val userName = intent.getStringExtra("userName")
         tv_name.text = userName
@@ -36,7 +37,6 @@ class ResultActivity : AppCompatActivity() {
         val nextActivity = if(isDangerous) EmergencyCall::class.java else HomeActivity::class.java
         button.setOnClickListener(View.OnClickListener { _ ->
             val currentIntent = intent
-            val userName = currentIntent.getStringExtra("userName")
             val userNumber = currentIntent.getStringExtra("userNumber")
             val userEmail = currentIntent.getStringExtra("userEmail")
             val userID = currentIntent.getStringExtra("userID")
@@ -49,7 +49,10 @@ class ResultActivity : AppCompatActivity() {
             startActivity(destIntent)
         })
     }
-    private fun setButtonColor(button: Button, isDangerous: Boolean) {
+    private fun markDiagnosed(): Unit {
+        DianosedSingleton.obj.set(true);
+    }
+    private fun setButtonColor(button: Button, isDangerous: Boolean): Unit {
         val selectedColorString = if (isDangerous) red else green
         val selectedColor = Color.parseColor(selectedColorString)
         button.backgroundColor = selectedColor
