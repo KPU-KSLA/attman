@@ -1,32 +1,34 @@
 package com.dps0340.attman
 
 import android.annotation.SuppressLint
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Color
+import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.JsonWriter
 import android.util.Log
-import android.util.Pair
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import org.json.JSONArray
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
+
 class SelfdiagnosisActivity : AppCompatActivity() {
-    val englishSymptoms = arrayOf("Cough", "Fever", "Throat discomfort", "Headache", "Nasal congestion")
-    val koreanSymptoms = arrayOf("기침", "37.5도 이상 열 또는 발열감", "인후통", "두통", "코막힘")
+    private val englishSymptoms = arrayOf("Cough", "Fever", "Throat discomfort", "Headache", "Nasal congestion")
+    private val koreanSymptoms = arrayOf("기침", "37.5도 이상 열 또는 발열감", "인후통", "두통", "코막힘")
+    private var preparedIntent: Intent? = null
     private val symptomsList = englishSymptoms.zip(koreanSymptoms.zip(englishSymptoms)
-    {
-        k, e -> "${k}(${e})"
+    { k, e ->
+        "${k}(${e})"
     })
     private val flags = (symptomsList.indices).map {
         0
@@ -64,7 +66,7 @@ class SelfdiagnosisActivity : AppCompatActivity() {
         flags[idx] = flag
     }
 
-    lateinit var currentPhotoPath: String
+    private lateinit var currentPhotoPath: String
 
     @SuppressLint("SimpleDateFormat")
     @Throws(IOException::class)
@@ -82,9 +84,33 @@ class SelfdiagnosisActivity : AppCompatActivity() {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            preparedIntent?.let {
+                galleryAddPic(it)
+            }
+        }
+    }
+
+    val REQUEST_IMAGE_CAPTURE = 1
+
+    private fun galleryAddPic(callBackIntent: Intent) {
+        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
+            val f = File(currentPhotoPath)
+            MediaScannerConnection.scanFile(this, arrayOf(f.toString()),
+                    arrayOf(f.getName())) { path, uri ->
+                run {
+                    callBackIntent.putExtra("imgUri", uri)
+                    startActivity(callBackIntent)
+                }
+            }
+        }
+    }
+
     val REQUEST_TAKE_PHOTO = 1
 
-    private fun dispatchTakePictureIntent() {
+    private fun dispatchTakePictureIntent(callbackIntent: Intent) {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
             // Ensure that there's a camera activity to handle the intent
             takePictureIntent.resolveActivity(packageManager)?.also {
@@ -129,11 +155,10 @@ class SelfdiagnosisActivity : AppCompatActivity() {
         intent.putExtra("userNumber", userNumber)
         intent.putExtra("userID", userID)
         intent.putExtra("userEmail", userEmail)
-        val isDangerous = flags.any {
-            e -> e == 1
-        }
+        val isDangerous = flags.any { e -> e == 1 }
         intent.putExtra("dangerous?", isDangerous)
-        dispatchTakePictureIntent()
-        startActivity(intent)
+        intent.putExtra("Result", JSONArray(flags).toString())
+        preparedIntent = intent
+        dispatchTakePictureIntent(intent)
     }
 }
