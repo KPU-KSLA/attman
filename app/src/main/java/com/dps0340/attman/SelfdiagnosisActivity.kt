@@ -31,7 +31,6 @@ class SelfdiagnosisActivity : AppCompatActivity() {
     private val flags = (0..symptomsList.size).map {
         0
     }.toMutableList()
-    var call_number = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.selfdiagnosis_xml)
@@ -50,11 +49,11 @@ class SelfdiagnosisActivity : AppCompatActivity() {
             inflater.inflate(R.layout.form_xml, root)
             val currentView = root.getChildAt(root.childCount - 1)
             val textView = currentView.findViewById<TextView>(R.id.symptom_textView)
-            textView.text = symptomsList!![i].second
+            textView.text = symptomsList[i].second
             val noButton = currentView.findViewById<Button>(R.id.no_button)
             val yesButton = currentView.findViewById<Button>(R.id.yes_button)
-            noButton.setOnClickListener(ListenerFactory.clickListenerFactory(this, i, 2, Color.GREEN))
-            yesButton.setOnClickListener(ListenerFactory.clickListenerFactory(this, i, 1, Color.RED))
+            noButton.setOnClickListener(ListenerFactory.makeClickListener(this, i, 2, Color.GREEN))
+            yesButton.setOnClickListener(ListenerFactory.makeClickListener(this, i, 1, Color.RED))
         }
     }
 

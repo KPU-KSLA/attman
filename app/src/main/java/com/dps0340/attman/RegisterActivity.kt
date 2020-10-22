@@ -19,11 +19,11 @@ class RegisterActivity : AppCompatActivity() {
         imageView.setImageResource(R.drawable.kpu_logo)
 
         //아이디값 찾아주기
-        val et_id = findViewById<TextView>(R.id.et_id2)
-        val et_pass = findViewById<TextView>(R.id.et_pass2)
-        val et_name = findViewById<TextView>(R.id.et_name2)
-        val et_number = findViewById<TextView>(R.id.et_number2)
-        val et_email = findViewById<TextView>(R.id.et_email2)
+        val et_id = findViewById<EditText>(R.id.et_id2)
+        val et_pass = findViewById<EditText>(R.id.et_pass2)
+        val et_name = findViewById<EditText>(R.id.et_name2)
+        val et_number = findViewById<EditText>(R.id.et_number2)
+        val et_email = findViewById<EditText>(R.id.et_email2)
 
         //회원가입 버튼 클릭 시 수행
         val btm_register = findViewById<Button>(R.id.btn_register2)

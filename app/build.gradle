@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId 'com.dps0340.attman'
-        minSdkVersion 16
+        minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -42,6 +42,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-database-ktx'
     implementation "androidx.core:core-ktx:+"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    // 해싱 라이브러리
+    implementation "org.abstractj.kalium:kalium:0.8.0"
 }
 repositories {
     mavenCentral()

@@ -4,7 +4,7 @@ import android.graphics.drawable.ColorDrawable
 import android.view.View
 
 object ListenerFactory {
-    fun clickListenerFactory(activity: SelfdiagnosisActivity, symptomIdx: Int, flag: Int, colorId: Int): View.OnClickListener {
+    fun makeClickListener(activity: SelfdiagnosisActivity, symptomIdx: Int, flag: Int, colorId: Int): View.OnClickListener {
         return object : View.OnClickListener {
             private var clicked = false
             private var originalColor : Int? = null
