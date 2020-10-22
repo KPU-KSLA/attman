@@ -17,6 +17,8 @@ class ResultActivity : AppCompatActivity() {
     val symptoms = listOf("cough", "through", "head", "high", "nose")
     val red = "#ffff0000"
     val green = "#ff228b22"
+    val normalText = "홈화면으로 바로가기"
+    val emergencyText = "긴급연락 바로가기"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
@@ -34,6 +36,7 @@ class ResultActivity : AppCompatActivity() {
         val isDangerous = intent.getBooleanExtra("dangerous?", false)
         val button = findViewById<Button>(R.id.btn)
         setButtonColor(button, isDangerous)
+        setButtonText(button, isDangerous)
         val nextActivity = if(isDangerous) EmergencyCall::class.java else HomeActivity::class.java
         button.setOnClickListener(View.OnClickListener { _ ->
             val currentIntent = intent
@@ -41,6 +44,7 @@ class ResultActivity : AppCompatActivity() {
             val userEmail = currentIntent.getStringExtra("userEmail")
             val userID = currentIntent.getStringExtra("userID")
             val destIntent = Intent(baseContext, nextActivity)
+            destIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             destIntent.putExtra("dangerous?", isDangerous)
             destIntent.putExtra("userName", userName)
             destIntent.putExtra("userNumber", userNumber)
@@ -56,5 +60,9 @@ class ResultActivity : AppCompatActivity() {
         val selectedColorString = if (isDangerous) red else green
         val selectedColor = Color.parseColor(selectedColorString)
         button.backgroundColor = selectedColor
+    }
+    private fun setButtonText(button: Button, isDangerous: Boolean): Unit {
+        val selectedText = if (isDangerous) emergencyText else normalText
+        button.text = selectedText
     }
 }

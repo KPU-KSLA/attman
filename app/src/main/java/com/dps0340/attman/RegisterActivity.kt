@@ -44,14 +44,13 @@ class RegisterActivity : AppCompatActivity() {
             val email = et_email.text.toString()
             val user = UserInfoBuilder.build(userID, rawPassword, userName, userNumber, email)
             val ref = database.getReference("userinfos/$userID")
-            var isExists: Boolean = false
             val existsListener = object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val userInfo: UserInfo? = dataSnapshot.getValue<UserInfo>()
-                    userInfo?.let {
-                        isExists = true
+                    if(!dataSnapshot.exists()) {
+                        ref.setValue(user)
+                        finish()
+                    } else {
                         toast("중복된 id입니다.")
-                        return
                     }
                 }
                 override fun onCancelled(databaseError: DatabaseError) {
@@ -61,10 +60,6 @@ class RegisterActivity : AppCompatActivity() {
                 }
             }
             ref.addListenerForSingleValueEvent(existsListener)
-            if(!isExists) {
-                ref.setValue(user)
-                finish()
-            }
         })
     }
 }

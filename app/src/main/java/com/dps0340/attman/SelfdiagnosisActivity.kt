@@ -28,7 +28,7 @@ class SelfdiagnosisActivity : AppCompatActivity() {
     {
         k, e -> "${k}(${e})"
     })
-    private val flags = (0..symptomsList.size).map {
+    private val flags = (symptomsList.indices).map {
         0
     }.toMutableList()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -110,10 +110,8 @@ class SelfdiagnosisActivity : AppCompatActivity() {
     }
 
     fun call() {
-        for (i in flags.indices) {
-            if (flags[i] != 2) {
-                return
-            }
+        if(flags.any{ e -> e == 0 }) {
+            return
         }
         var intent = intent
         val userName = intent.getStringExtra("userName")

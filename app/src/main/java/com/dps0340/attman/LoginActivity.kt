@@ -19,6 +19,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
+import org.jetbrains.anko.toast
 
 class LoginActivity : AppCompatActivity() {
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -49,7 +50,7 @@ class LoginActivity : AppCompatActivity() {
                         if (it.id == userID && it.password == encryptedPassword) {
                             loginSuccess(it)
                         } else {
-                            Toast.makeText(applicationContext, "로그인 실패", Toast.LENGTH_SHORT).show()
+                            toast("로그인 실패")
                             return
                         }
                     }
