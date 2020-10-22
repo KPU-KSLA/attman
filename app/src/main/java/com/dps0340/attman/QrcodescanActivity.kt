@@ -53,7 +53,7 @@ class QrcodescanActivity : AppCompatActivity() {
                 val mDate = Date(now)
                 val simpleData = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
                 val time = simpleData.format(mDate)
-                val responseListener: Response.Listener<String> = Response.Listener { response ->
+                val responseListener: Response.Listener<String?>? = Response.Listener { response ->
                     try {
                         val jsonObject = JSONObject(response)
                         val success = jsonObject.getBoolean("success")

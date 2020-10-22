@@ -7,6 +7,9 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Response
 import com.android.volley.toolbox.Volley
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import org.jetbrains.anko.toast
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -27,36 +30,21 @@ class RegisterActivity : AppCompatActivity() {
 
         //회원가입 버튼 클릭 시 수행
         val btm_register = findViewById<Button>(R.id.btn_register2)
+        val database = Firebase.database
         btm_register.setOnClickListener(View.OnClickListener {
             val userID = et_id.text.toString()
-            val userPass = et_pass.text.toString()
+            val rawPassword = et_pass.text.toString()
             val userName = et_name.text.toString()
-            val userNumber = et_number.text.toString().toInt()
-            val userEmail = et_email.text.toString()
-            val responseListener = Response.Listener<String?> { response ->
-                try {
-                    val jsonObject = JSONObject(response)
-                    val success = jsonObject.getBoolean("success")
-
-                    //회원가입 성공시
-                    if (success) {
-                        Toast.makeText(applicationContext, "성공", Toast.LENGTH_SHORT).show()
-                        val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
-                        startActivity(intent)
-
-                        //회원가입 실패시
-                    } else {
-                        Toast.makeText(applicationContext, "실패", Toast.LENGTH_SHORT).show()
-                        return@Listener
-                    }
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
+            val userNumber = et_number.text.toString()
+            val email = et_email.text.toString()
+            val user = UserInfoBuilder.build(userID, rawPassword, userName, userNumber, email)
+            val ref = database.getReference("userinfos/$userID")
+            ref.key?.let {
+                toast("중복된 id입니다.")
+                return@OnClickListener
             }
-            //서버로 Volley를 이용해서 요청
-            val registerRequest = RegisterRequest(userID, userPass, userName, userNumber, userEmail, responseListener)
-            val queue = Volley.newRequestQueue(this@RegisterActivity)
-            queue.add(registerRequest)
+            ref.setValue(user)
+            finish()
         })
     }
 }

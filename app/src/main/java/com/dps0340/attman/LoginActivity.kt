@@ -2,7 +2,6 @@ package com.dps0340.attman
 
 import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -13,16 +12,13 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import com.android.volley.Response
-import com.android.volley.toolbox.Volley
+import com.google.firebase.FirebaseApp
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
-import org.json.JSONException
-import org.json.JSONObject
 
 class LoginActivity : AppCompatActivity() {
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -30,6 +26,7 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_xml)
         requestPermissions()
+        FirebaseApp.initializeApp(baseContext)
         val imageView = findViewById<ImageView>(R.id.kpu_logo) //한국산업기술대 로고 이미지뷰
         imageView.setImageResource(R.drawable.kpu_logo)
         val et_id = findViewById<EditText>(R.id.et_id)
@@ -60,7 +57,7 @@ class LoginActivity : AppCompatActivity() {
 
                 override fun onCancelled(databaseError: DatabaseError) {
                     // Getting Post failed, log a message
-                    Log.w("FIREBASE", "loadPost:onCancelled", databaseError.toException())
+                    Log.w("FIREBASE", "matchListener:onCancelled", databaseError.toException())
                     // ...
                 }
             }
