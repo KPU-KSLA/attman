@@ -3,7 +3,7 @@ package com.dps0340.attman
 import java.math.BigInteger
 import java.security.MessageDigest
 
-object sha512 {
+object Sha512 {
     fun encrypt(input:String): String {
         // code from https://stackoverflow.com/questions/46510338/sha-512-hashing-with-android
         val md: MessageDigest = MessageDigest.getInstance("SHA-512")

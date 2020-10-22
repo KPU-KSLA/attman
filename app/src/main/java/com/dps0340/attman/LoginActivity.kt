@@ -42,7 +42,7 @@ class LoginActivity : AppCompatActivity() {
         btn_login.setOnClickListener(View.OnClickListener {
             val userID = et_id.text.toString()
             val rawUserPassword = et_pass.text.toString()
-            val encryptedPassword = sha512.encrypt(rawUserPassword)
+            val encryptedPassword = Sha512.encrypt(rawUserPassword)
             val matchListener = object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val user: UserInfo? = dataSnapshot.getValue<UserInfo>()
