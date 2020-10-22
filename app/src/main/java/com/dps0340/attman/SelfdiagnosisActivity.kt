@@ -135,7 +135,6 @@ class SelfdiagnosisActivity : AppCompatActivity() {
         val userEmail = intent.getStringExtra("userEmail")
         val userID = intent.getStringExtra("userID")
         intent = Intent(baseContext, ResultActivity::class.java)
-//        call_number++
         for (i in symptomsList.indices) {
             val p = symptomsList[i]
             val name = p.first
@@ -146,7 +145,10 @@ class SelfdiagnosisActivity : AppCompatActivity() {
         intent.putExtra("userNumber", userNumber)
         intent.putExtra("userID", userID)
         intent.putExtra("userEmail", userEmail)
-//        intent.putExtra("call_number", call_number)
+        val isDangerous = flags.any {
+            e -> e == 1
+        }
+        intent.putExtra("dangerous?", isDangerous)
         dispatchTakePictureIntent()
         startActivity(intent)
     }

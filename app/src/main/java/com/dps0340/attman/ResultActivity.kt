@@ -9,17 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 
 
 class ResultActivity : AppCompatActivity() {
-    var coughN = 0
-    var throughN = 0
-    var headN = 0
-    var highN = 0
-    var noseN = 0
     var result_number = 0
-    lateinit var cough: TextView
-    lateinit var through: TextView
-    lateinit var head: TextView
-    lateinit var high: TextView
-    lateinit var nose: TextView
     lateinit var tv_name: TextView
     lateinit var button: Button
     lateinit var btn_emergencycall: Button
@@ -28,54 +18,23 @@ class ResultActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
-        val intent = intent
         tv_name = findViewById(R.id.tv_name7)
         val userName = intent.getStringExtra("userName")
-        tv_name.setText(userName)
+        tv_name.text = userName
         val answers = symptoms.map{ s -> intent.getIntExtra(s, 0)}
         for((a, s) in answers.zip(symptoms))
         {
             val id = resources.getIdentifier(s, "id", packageName)
             val view = findViewById<TextView>(id)
-            view.text = symptoms.get(a)
+            view.text = selections[a]
         }
-        cough = findViewById(R.id.cough)
-        through = findViewById(R.id.through)
-        head = findViewById(R.id.head)
-        high = findViewById(R.id.high)
-        nose = findViewById(R.id.nose)
-        button = findViewById(R.id.btn)
         btn_emergencycall = findViewById(R.id.btn_emergencycall3)
-        if (coughN == 1) {
-            cough.setText("네")
-        } else {
-            cough.setText("아니오")
-        }
-        if (throughN == 1) {
-            through.setText("네")
-        } else {
-            through.setText("아니오")
-        }
-        if (headN == 1) {
-            head.setText("네")
-        } else {
-            head.setText("아니오")
-        }
-        if (highN == 1) {
-            high.setText("네")
-        } else {
-            high.setText("아니오")
-        }
-        if (noseN == 1) {
-            nose.setText("네")
-        } else {
-            nose.setText("아니오")
-        }
         val intent3 = getIntent()
 //        val call_number = intent3.getIntExtra("call_number", 0)
 //        if (call_number == 0) {
+        // 조건 처리 TODO
             btn_emergencycall.setVisibility(View.GONE)
-            button.setOnClickListener(View.OnClickListener { //TODO
+            button.setOnClickListener(View.OnClickListener { _ -> //TODO
                 val intent2 = getIntent()
                 val userName = intent2.getStringExtra("userName")
                 val userNumber = intent2.getStringExtra("userNumber")
