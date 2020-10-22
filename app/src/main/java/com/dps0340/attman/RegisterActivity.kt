@@ -2,12 +2,17 @@ package com.dps0340.attman
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Response
 import com.android.volley.toolbox.Volley
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import org.jetbrains.anko.toast
 import org.json.JSONException
@@ -39,12 +44,27 @@ class RegisterActivity : AppCompatActivity() {
             val email = et_email.text.toString()
             val user = UserInfoBuilder.build(userID, rawPassword, userName, userNumber, email)
             val ref = database.getReference("userinfos/$userID")
-            ref.key?.let {
-                toast("중복된 id입니다.")
-                return@OnClickListener
+            var isExists: Boolean = false
+            val existsListener = object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val userInfo: UserInfo? = dataSnapshot.getValue<UserInfo>()
+                    userInfo?.let {
+                        isExists = true
+                        toast("중복된 id입니다.")
+                        return
+                    }
+                }
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Getting Post failed, log a message
+                    Log.w("FIREBASE", "existsListener:onCancelled", databaseError.toException())
+                    // ...
+                }
             }
-            ref.setValue(user)
-            finish()
+            ref.addListenerForSingleValueEvent(existsListener)
+            if(!isExists) {
+                ref.setValue(user)
+                finish()
+            }
         })
     }
 }
