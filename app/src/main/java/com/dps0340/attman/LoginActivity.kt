@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -14,7 +15,11 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Response
 import com.android.volley.toolbox.Volley
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import org.json.JSONException
 import org.json.JSONObject
@@ -24,6 +29,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_xml)
+        requestPermissions()
         val imageView = findViewById<ImageView>(R.id.kpu_logo) //한국산업기술대 로고 이미지뷰
         imageView.setImageResource(R.drawable.kpu_logo)
         val et_id = findViewById<EditText>(R.id.et_id)
@@ -35,41 +41,43 @@ class LoginActivity : AppCompatActivity() {
         })
         val btn_login = findViewById<Button>(R.id.btn_login)
         val database = Firebase.database
-        val userinfos = database.getReference("userinfos")
         btn_login.setOnClickListener(View.OnClickListener {
             val userID = et_id.text.toString()
-            val userPassword = et_pass.text.toString()
-            val responseListener: Response.Listener<String> = Response.Listener { response ->
-                try {
-                    val jsonObject = JSONObject(response)
-                    val success = jsonObject.getBoolean("success")
-                    if (success) { //로그인 성공시
-                        val userID = jsonObject.getString("userID")
-                        val userPassword = jsonObject.getString("userPassword")
-                        val userName = jsonObject.getString("userName")
-                        val userNumber = jsonObject.getString("userNumber")
-                        val userEmail = jsonObject.getString("userEmail")
-                        Toast.makeText(applicationContext, "로그인 성공", Toast.LENGTH_SHORT).show()
-                        val intent = Intent(this@LoginActivity, HomeActivity::class.java)
-                        intent.putExtra("userID", userID)
-                        intent.putExtra("userPassword", userPassword)
-                        intent.putExtra("userName", userName)
-                        intent.putExtra("userNumber", userNumber)
-                        intent.putExtra("userEmail", userEmail)
-                        startActivity(intent)
-                    } else { //로그인 실패시
-                        Toast.makeText(applicationContext, "로그인 실패", Toast.LENGTH_SHORT).show()
-                        return@Listener
+            val rawUserPassword = et_pass.text.toString()
+            val encryptedPassword = sha512.encrypt(rawUserPassword)
+            val matchListener = object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val user: UserInfo? = dataSnapshot.getValue<UserInfo>()
+                    user?.let {
+                        if (it.id == userID && it.password == encryptedPassword) {
+                            loginSuccess(it)
+                        } else {
+                            Toast.makeText(applicationContext, "로그인 실패", Toast.LENGTH_SHORT).show()
+                            return
+                        }
                     }
-                } catch (e: JSONException) {
-                    e.printStackTrace()
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Getting Post failed, log a message
+                    Log.w("FIREBASE", "loadPost:onCancelled", databaseError.toException())
+                    // ...
                 }
             }
-            val loginRequest = LoginRequest(userID, userPassword, responseListener)
-            val queue = Volley.newRequestQueue(this@LoginActivity)
-            queue.add(loginRequest)
+            val userRef = database.getReference("userinfos/$userID")
+            userRef.addListenerForSingleValueEvent(matchListener)
         })
-        requestPermissions()
+    }
+
+    private fun loginSuccess(user: UserInfo) {
+        Toast.makeText(applicationContext, "로그인 성공", Toast.LENGTH_SHORT).show()
+        val intent = Intent(this@LoginActivity, HomeActivity::class.java)
+        intent.putExtra("userID", user.id)
+        intent.putExtra("userPassword", user.password)
+        intent.putExtra("userName", user.name)
+        intent.putExtra("userNumber", user.stdNum)
+        intent.putExtra("userEmail", user.email)
+        startActivity(intent)
     }
 
     private fun requestPermissions(): Unit {
