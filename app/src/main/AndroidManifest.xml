@@ -41,7 +41,7 @@
         <activity android:name="AttendancecheckActivity"
             android:label="AttendancecheckActivity">
         </activity>
-        <activity android:name="Emergencycall"
+        <activity android:name="EmergencyCall"
             android:label="Emergencycall">
         </activity>
         <activity android:name="PrivacyActivity"

@@ -1,20 +1,23 @@
 package com.dps0340.attman
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import org.jetbrains.anko.backgroundColor
 
 
 class ResultActivity : AppCompatActivity() {
-    var result_number = 0
     lateinit var tv_name: TextView
     lateinit var button: Button
     lateinit var btn_emergencycall: Button
     val selections = listOf("아니오", "네")
     val symptoms = listOf("cough", "through", "head", "high", "nose")
+    val red = "#ffff0000"
+    val green = "#ff228b22"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
@@ -28,43 +31,27 @@ class ResultActivity : AppCompatActivity() {
             val view = findViewById<TextView>(id)
             view.text = selections[a]
         }
-        btn_emergencycall = findViewById(R.id.btn_emergencycall3)
-        val intent3 = getIntent()
-//        val call_number = intent3.getIntExtra("call_number", 0)
-//        if (call_number == 0) {
-        // 조건 처리 TODO
-            btn_emergencycall.setVisibility(View.GONE)
-            button.setOnClickListener(View.OnClickListener { _ -> //TODO
-                val intent2 = getIntent()
-                val userName = intent2.getStringExtra("userName")
-                val userNumber = intent2.getStringExtra("userNumber")
-                val userEmail = intent2.getStringExtra("userEmail")
-                val userID = intent2.getStringExtra("userID")
-                val intent1 = Intent(baseContext, HomeActivity::class.java)
-                result_number++
-                intent1.putExtra("result_number", result_number)
-                intent1.putExtra("userName", userName)
-                intent1.putExtra("userNumber", userNumber)
-                intent1.putExtra("userID", userID)
-                intent1.putExtra("userEmail", userEmail)
-                startActivity(intent1)
-            })
-//        } else if (call_number == 1) {
-//            button.setVisibility(View.GONE)
-//            btn_emergencycall.setOnClickListener(View.OnClickListener {
-//                val intent2 = getIntent()
-//                val userName = intent2.getStringExtra("userName")
-//                val userNumber = intent2.getStringExtra("userNumber")
-//                val userEmail = intent2.getStringExtra("userEmail")
-//                val userID = intent2.getStringExtra("userID")
-//                val intent1 = Intent(baseContext, Emergencycall::class.java)
-//                intent1.putExtra("result_number", result_number)
-//                intent1.putExtra("userName", userName)
-//                intent1.putExtra("userNumber", userNumber)
-//                intent1.putExtra("userID", userID)
-//                intent1.putExtra("userEmail", userEmail)
-//                startActivity(intent1)
-//            })
-//        }
+        val isDangerous = intent.getBooleanExtra("dangerous?", false)
+        val button = findViewById<Button>(R.id.btn)
+        val nextActivity = if(isDangerous) EmergencyCall::class.java else HomeActivity::class.java
+        button.setOnClickListener(View.OnClickListener { _ -> //TODO
+            val currentIntent = intent
+            val userName = currentIntent.getStringExtra("userName")
+            val userNumber = currentIntent.getStringExtra("userNumber")
+            val userEmail = currentIntent.getStringExtra("userEmail")
+            val userID = currentIntent.getStringExtra("userID")
+            val destIntent = Intent(baseContext, nextActivity)
+            destIntent.putExtra("dangerous?", isDangerous)
+            destIntent.putExtra("userName", userName)
+            destIntent.putExtra("userNumber", userNumber)
+            destIntent.putExtra("userID", userID)
+            destIntent.putExtra("userEmail", userEmail)
+            startActivity(destIntent)
+        })
+    }
+    fun setButtonColor(button: Button, isDangerous: Boolean) {
+        val selectedColorString = if (isDangerous) red else green
+        val selectedColor = Color.parseColor(selectedColorString)
+        button.backgroundColor = selectedColor
     }
 }
