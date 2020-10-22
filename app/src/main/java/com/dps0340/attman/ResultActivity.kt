@@ -13,7 +13,6 @@ import org.jetbrains.anko.backgroundColor
 class ResultActivity : AppCompatActivity() {
     lateinit var tv_name: TextView
     lateinit var button: Button
-    lateinit var btn_emergencycall: Button
     val selections = listOf("아니오", "네")
     val symptoms = listOf("cough", "through", "head", "high", "nose")
     val red = "#ffff0000"
@@ -33,8 +32,9 @@ class ResultActivity : AppCompatActivity() {
         }
         val isDangerous = intent.getBooleanExtra("dangerous?", false)
         val button = findViewById<Button>(R.id.btn)
+        setButtonColor(button, isDangerous)
         val nextActivity = if(isDangerous) EmergencyCall::class.java else HomeActivity::class.java
-        button.setOnClickListener(View.OnClickListener { _ -> //TODO
+        button.setOnClickListener(View.OnClickListener { _ ->
             val currentIntent = intent
             val userName = currentIntent.getStringExtra("userName")
             val userNumber = currentIntent.getStringExtra("userNumber")
@@ -49,7 +49,7 @@ class ResultActivity : AppCompatActivity() {
             startActivity(destIntent)
         })
     }
-    fun setButtonColor(button: Button, isDangerous: Boolean) {
+    private fun setButtonColor(button: Button, isDangerous: Boolean) {
         val selectedColorString = if (isDangerous) red else green
         val selectedColor = Color.parseColor(selectedColorString)
         button.backgroundColor = selectedColor
