@@ -31,7 +31,8 @@ android {
 }
 
 dependencies {
-    implementation 'com.beust:klaxon:5.0.1'
+//    implementation 'com.beust:klaxon:5.0.1'
+    implementation 'com.google.code.gson:gson:2.8.5'
     implementation "org.jetbrains.anko:anko:$anko_version"
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
@@ -54,10 +55,12 @@ dependencies {
     implementation "androidx.core:core-ktx:+"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     // 해싱 라이브러리
-    implementation "org.abstractj.kalium:kalium:0.8.0"
+//    implementation "org.abstractj.kalium:kalium:0.8.0"
     // OCR 라이브러리
     // https://mvnrepository.com/artifact/net.sourceforge.tess4j/tess4j
     compile group: 'net.sourceforge.tess4j', name: 'tess4j', version: '4.5.3'
+    // 구글 클라우드 - 사진저장용
+    compile group: 'com.google.cloud', name: 'google-cloud-storage', version: '1.36.0'
 }
 repositories {
     mavenCentral()

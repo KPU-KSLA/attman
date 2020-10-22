@@ -8,14 +8,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.JsonWriter
-import android.util.Log
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
-import org.json.JSONArray
+import com.google.gson.Gson
+import net.sourceforge.tess4j.Tesseract
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -99,8 +98,11 @@ class SelfdiagnosisActivity : AppCompatActivity() {
         Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
             val f = File(currentPhotoPath)
             MediaScannerConnection.scanFile(this, arrayOf(f.toString()),
-                    arrayOf(f.getName())) { path, uri ->
+                    arrayOf(f.name)) { path, uri ->
                 run {
+                    val file = File(uri.path)
+                    val ocr = Tesseract().doOCR(file)
+                    val num =
                     callBackIntent.putExtra("imgUri", uri)
                     startActivity(callBackIntent)
                 }
@@ -157,7 +159,8 @@ class SelfdiagnosisActivity : AppCompatActivity() {
         intent.putExtra("userEmail", userEmail)
         val isDangerous = flags.any { e -> e == 1 }
         intent.putExtra("dangerous?", isDangerous)
-        intent.putExtra("Result", JSONArray(flags).toString())
+        val gson = Gson()
+        intent.putExtra("result", gson.toJson(flags))
         preparedIntent = intent
         dispatchTakePictureIntent(intent)
     }
