@@ -9,7 +9,6 @@ import kotlinx.android.parcel.Parcelize
 data class Case(
     var userID: String = "",
     var temp: Double = 0.0,
-    var imgUri: String = "",
     var isDangerous: Boolean = false,
     var result: List<Int>,
     var qr: String = ""
@@ -18,7 +17,7 @@ data class Case(
 fun Case.convertToMap(): MutableMap<String, Any> {
     val map = mutableMapOf<String, Any>()
     map["userID"] = userID
-    map["imgUri"] = imgUri
+    map["temp"] = temp
     map["isDangerous"] = isDangerous
     map["result"] = result
     map["qr"] = qr

@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import com.google.gson.Gson
 import net.sourceforge.tess4j.Tesseract
+import org.jetbrains.anko.toast
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -92,6 +93,15 @@ class SelfdiagnosisActivity : AppCompatActivity() {
         }
     }
 
+    private fun parseFloatFromImgUri(imgUri: Uri): Double? {
+        val result: String = Tesseract().doOCR(File(imgUri.path))
+        return try {
+            result.toDouble()
+        } catch (e : NumberFormatException) {
+            null
+        }
+    }
+
     val REQUEST_IMAGE_CAPTURE = 1
 
     private fun galleryAddPic(callBackIntent: Intent) {
@@ -100,9 +110,13 @@ class SelfdiagnosisActivity : AppCompatActivity() {
             MediaScannerConnection.scanFile(this, arrayOf(f.toString()),
                     arrayOf(f.name)) { path, uri ->
                 run {
-                    val file = File(uri.path)
-                    val ocr = Tesseract().doOCR(file)
-                    val num =
+                    val num = parseFloatFromImgUri(uri)
+                    if(num == null || 25 > num || 45 < num) {
+                        toast("체온이 식별되지 않았습니다.")
+                        dispatchTakePictureIntent(intent)
+                        return@scanFile
+                    }
+                    callBackIntent.putExtra("temp", num)
                     callBackIntent.putExtra("imgUri", uri)
                     startActivity(callBackIntent)
                 }

@@ -8,14 +8,11 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.beust.klaxon.Json
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import net.sourceforge.tess4j.Tesseract
 import org.jetbrains.anko.backgroundColor
-import java.io.File
 
 
 class ResultActivity : AppCompatActivity() {
@@ -42,12 +39,8 @@ class ResultActivity : AppCompatActivity() {
         val userNumber = intent.getStringExtra("userNumber")
         val userEmail = intent.getStringExtra("userEmail")
         val userID = intent.getStringExtra("userID")
-        val imgUri = Uri.parse(intent.getStringExtra("imgUri"))
         val isDangerous = intent.getBooleanExtra("dangerous?", false)
-        val temp = parseFloatFromImgUri(imgUri)
-        if(temp == null) {
-            finish()
-        }
+        val temp = intent.getDoubleExtra("temp", 0.0)
         val button = findViewById<Button>(R.id.btn)
         setButtonColor(button, isDangerous)
         setButtonText(button, isDangerous)
@@ -56,7 +49,7 @@ class ResultActivity : AppCompatActivity() {
         val gson = Gson()
         val result = gson.fromJson<List<Int>>(intent.getStringExtra("result"), object: TypeToken<List<Int>>() {}.type)
         val qr = "" // TODO
-        uploadDB(userID!!, temp!!, isDangerous, result, qr)
+        uploadDB(userID!!, temp, isDangerous, result, qr)
         destIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         destIntent.putExtra("dangerous?", isDangerous)
         destIntent.putExtra("userName", userName)
@@ -79,21 +72,11 @@ class ResultActivity : AppCompatActivity() {
         val selectedText = if (isDangerous) emergencyText else normalText
         button.text = selectedText
     }
-    private fun parseFloatFromImgUri(imgUri: Uri): Double? {
-        val result: String = Tesseract().doOCR(File(imgUri.path))
-        return try {
-            result.toDouble()
-        } catch (e : NumberFormatException) {
-            null
-        }
-    }
     private fun uploadDB(userID: String, temp: Double, isDangerous: Boolean, result: List<Int>, qr: String = "") {
         val ref = Firebase.database.reference.child("cases")
         val obj = ref.push()
         val key = obj.key!!
-        val uploadedImgKey = storage.reference.child("images").push().key
-        uploadedImgKey.put
-        val case = Case(userID, temp, uploadedImgKey, isDangerous, result, qr)
+        val case = Case(userID, temp, isDangerous, result, qr)
         ref.child(key).setValue(case)
     }
 }
