@@ -39,11 +39,6 @@ class ResultActivity : AppCompatActivity() {
             val view = findViewById<TextView>(id)
             view.text = symptoms.get(a)
         }
-
-
-        symptoms.forEach{
-            s -> resources.getIdentifier(s)
-        }
         cough = findViewById(R.id.cough)
         through = findViewById(R.id.through)
         head = findViewById(R.id.head)
@@ -77,8 +72,8 @@ class ResultActivity : AppCompatActivity() {
             nose.setText("아니오")
         }
         val intent3 = getIntent()
-        val call_number = intent3.getIntExtra("call_number", 0)
-        if (call_number == 0) {
+//        val call_number = intent3.getIntExtra("call_number", 0)
+//        if (call_number == 0) {
             btn_emergencycall.setVisibility(View.GONE)
             button.setOnClickListener(View.OnClickListener { //TODO
                 val intent2 = getIntent()
@@ -95,22 +90,22 @@ class ResultActivity : AppCompatActivity() {
                 intent1.putExtra("userEmail", userEmail)
                 startActivity(intent1)
             })
-        } else if (call_number == 1) {
-            button.setVisibility(View.GONE)
-            btn_emergencycall.setOnClickListener(View.OnClickListener {
-                val intent2 = getIntent()
-                val userName = intent2.getStringExtra("userName")
-                val userNumber = intent2.getStringExtra("userNumber")
-                val userEmail = intent2.getStringExtra("userEmail")
-                val userID = intent2.getStringExtra("userID")
-                val intent1 = Intent(baseContext, Emergencycall::class.java)
-                intent1.putExtra("result_number", result_number)
-                intent1.putExtra("userName", userName)
-                intent1.putExtra("userNumber", userNumber)
-                intent1.putExtra("userID", userID)
-                intent1.putExtra("userEmail", userEmail)
-                startActivity(intent1)
-            })
-        }
+//        } else if (call_number == 1) {
+//            button.setVisibility(View.GONE)
+//            btn_emergencycall.setOnClickListener(View.OnClickListener {
+//                val intent2 = getIntent()
+//                val userName = intent2.getStringExtra("userName")
+//                val userNumber = intent2.getStringExtra("userNumber")
+//                val userEmail = intent2.getStringExtra("userEmail")
+//                val userID = intent2.getStringExtra("userID")
+//                val intent1 = Intent(baseContext, Emergencycall::class.java)
+//                intent1.putExtra("result_number", result_number)
+//                intent1.putExtra("userName", userName)
+//                intent1.putExtra("userNumber", userNumber)
+//                intent1.putExtra("userID", userID)
+//                intent1.putExtra("userEmail", userEmail)
+//                startActivity(intent1)
+//            })
+//        }
     }
 }
