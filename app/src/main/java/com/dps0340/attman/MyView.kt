@@ -10,8 +10,7 @@ internal class MyView(context: Context?) : View(context) {
         paint.isAntiAlias = true
         paint.textSize = 60f
         paint.color = Color.CYAN //첫줄 제목 색깔 청녹색
-        val t: Typeface
-        t = Typeface.create(Typeface.DEFAULT_BOLD, Typeface.BOLD)
+        val t = Typeface.create(Typeface.DEFAULT_BOLD, Typeface.BOLD)
         paint.typeface = t
         paint.textAlign = Paint.Align.CENTER
         canvas.drawText("코로나바이러스 감염증 대응", 540f, 600f, paint) //첫화면 제목 첫줄

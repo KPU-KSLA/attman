@@ -7,17 +7,20 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import com.google.gson.Gson
-import net.sourceforge.tess4j.Tesseract
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.TextRecognition
 import org.jetbrains.anko.toast
-import java.io.File
-import java.io.IOException
+import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -42,6 +45,7 @@ class SelfdiagnosisActivity : AppCompatActivity() {
         textView.text = userName
         inflateSymptomsLayout()
     }
+
 
     private fun inflateSymptomsLayout() {
         val size = symptomsList.size
@@ -93,12 +97,17 @@ class SelfdiagnosisActivity : AppCompatActivity() {
         }
     }
 
-    private fun parseFloatFromImgUri(imgUri: Uri): Double? {
-        val result: String = Tesseract().doOCR(File(imgUri.path))
-        return try {
-            result.toDouble()
-        } catch (e : NumberFormatException) {
-            null
+    private fun parseFloatWithCallback(path: String, callBack: (String)->Unit): Unit {
+        val image = InputImage.fromFilePath(this, Uri.fromFile(File(path)))
+        val recognizer = TextRecognition.getClient()
+        recognizer.process(image).addOnSuccessListener { visionText -> run {
+                try {
+                    callBack(visionText.text)
+                } catch (e: Exception) {
+                }
+            }
+        }.addOnFailureListener {
+
         }
     }
 
@@ -108,18 +117,28 @@ class SelfdiagnosisActivity : AppCompatActivity() {
         Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
             val f = File(currentPhotoPath)
             MediaScannerConnection.scanFile(this, arrayOf(f.toString()),
-                    arrayOf(f.name)) { path, uri ->
+            arrayOf(f.name)) { path, uri ->
                 run {
-                    val num = parseFloatFromImgUri(uri)
-                    if(num == null || 25 > num || 45 < num) {
-                        toast("체온이 식별되지 않았습니다.")
-                        dispatchTakePictureIntent(intent)
-                        return@scanFile
+                    val callBack = { s: String ->
+                        run {
+                            try {
+                                val num = s.toDouble()
+                                if (25.0 > num || 45.0 < num) {
+                                    toast("체온이 식별되지 않았습니다.")
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        dispatchTakePictureIntent(intent)
+                                    }, 2000)
+                                    return@run
+                                }
+                                callBackIntent.putExtra("temp", num)
+                                callBackIntent.putExtra("imgUri", uri)
+                                startActivity(callBackIntent)
+                            }  catch (e: Exception) { }
+                        }
                     }
-                    callBackIntent.putExtra("temp", num)
-                    callBackIntent.putExtra("imgUri", uri)
-                    startActivity(callBackIntent)
+                        parseFloatWithCallback(path, callBack)
                 }
+
             }
         }
     }
@@ -127,7 +146,7 @@ class SelfdiagnosisActivity : AppCompatActivity() {
     val REQUEST_TAKE_PHOTO = 1
 
     private fun dispatchTakePictureIntent(callbackIntent: Intent) {
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE_SECURE).also { takePictureIntent ->
             // Ensure that there's a camera activity to handle the intent
             takePictureIntent.resolveActivity(packageManager)?.also {
                 // Create the File where the photo should go
