@@ -38,9 +38,10 @@ class ResultActivity : AppCompatActivity() {
         }
         val userNumber = intent.getStringExtra("userNumber")
         val userEmail = intent.getStringExtra("userEmail")
-        val userID = intent.getStringExtra("userID")
+        val userID = intent.getStringExtra("userID") ?: ""
         val isDangerous = intent.getBooleanExtra("dangerous?", false)
         val temp = intent.getDoubleExtra("temp", 0.0)
+        val time = intent.getStringExtra("time") ?: ""
         val tempView = findViewById<TextView>(R.id.temp)
         tempView.text = temp.toString()
         val button = findViewById<Button>(R.id.btn)
@@ -50,8 +51,8 @@ class ResultActivity : AppCompatActivity() {
         val destIntent = Intent(baseContext, nextActivity)
         val gson = Gson()
         val result = gson.fromJson<List<Int>>(intent.getStringExtra("result"), object: TypeToken<List<Int>>() {}.type)
-        val qr = "" // TODO
-        uploadDB(userID!!, temp, isDangerous, result, qr)
+        val qr = intent.getStringExtra("qr") ?: ""
+        uploadDB(userID, temp, isDangerous, result, time, qr)
         destIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         destIntent.putExtra("dangerous?", isDangerous)
         destIntent.putExtra("userName", userName)
@@ -74,11 +75,11 @@ class ResultActivity : AppCompatActivity() {
         val selectedText = if (isDangerous) emergencyText else normalText
         button.text = selectedText
     }
-    private fun uploadDB(userID: String, temp: Double, isDangerous: Boolean, result: List<Int>, qr: String = "") {
+    private fun uploadDB(userID: String, temp: Double, isDangerous: Boolean, result: List<Int>, time: String, qr: String = "") {
         val ref = Firebase.database.reference.child("cases")
         val obj = ref.push()
         val key = obj.key!!
-        val case = Case(userID, temp, isDangerous, result, qr)
+        val case = Case(userID, temp, isDangerous, result, time, qr)
         ref.child(key).setValue(case)
     }
 }

@@ -11,6 +11,7 @@ data class Case(
     var temp: Double = 0.0,
     var isDangerous: Boolean = false,
     var result: List<Int>,
+    var time: String = "",
     var qr: String = ""
 ) : Parcelable
 
@@ -20,6 +21,7 @@ fun Case.convertToMap(): MutableMap<String, Any> {
     map["temp"] = temp
     map["isDangerous"] = isDangerous
     map["result"] = result
+    map["time"] = time
     map["qr"] = qr
     return map
 }

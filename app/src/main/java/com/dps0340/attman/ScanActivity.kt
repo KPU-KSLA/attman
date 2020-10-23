@@ -2,20 +2,26 @@ package com.dps0340.attman
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Color
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
+import com.google.zxing.integration.android.IntentIntegrator
+import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 import java.io.File
 import java.io.IOException
+import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -60,7 +66,7 @@ class ScanActivity : AppCompatActivity() {
             dispatchTakePictureIntent()
         }
         QRButton.setOnClickListener {
-            toast("TODO")
+            dispatchQRIntent()
         }
         FinishButton.setOnClickListener {
             toast("먼저 체온계 인식을 수행해 주세요.")
@@ -100,6 +106,8 @@ class ScanActivity : AppCompatActivity() {
                                     toast("이미 완료되었습니다.")
                                 }
                                 FinishButton.setOnClickListener {
+                                    val timeStamp = Timestamp(System.currentTimeMillis())
+                                    preparedIntent.putExtra("time", timeStamp)
                                     startActivity(preparedIntent)
                                 }
                                 return@run
@@ -139,7 +147,7 @@ class ScanActivity : AppCompatActivity() {
             galleryAddPic()
         }
         if (requestCode == REQUEST_QR_CAPTURE && resultCode == RESULT_OK) {
-            galleryAddPic()
+            processQRResult(requestCode, resultCode, data)
         }
     }
 
@@ -190,8 +198,23 @@ class ScanActivity : AppCompatActivity() {
         }
     }
 
-    private fun dispatchQRIntent() {
+    private fun processQRResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+        if (result == null || result.contents == null) {
+            toast("QR코드를 다시 스캔하여 주세요")
+            return
+        }
+        longToast("Scanned Text: $result.contents")
+        val content = result.contents
+        preparedIntent.putExtra("qr", content)
+        makeCompleteText(QRButton)
+        QRButton.setOnClickListener {
+            toast("이미 완료되었습니다.")
+        }
+    }
 
+    private fun dispatchQRIntent() {
+        IntentIntegrator(this).setRequestCode(REQUEST_QR_CAPTURE).initiateScan()
     }
 
     private fun makeCompletable() {
