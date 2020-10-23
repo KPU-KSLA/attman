@@ -85,7 +85,7 @@ class SelfDiagnosisActivity : AppCompatActivity() {
         val userNumber = currentIntent.getStringExtra("userNumber")
         val userEmail = currentIntent.getStringExtra("userEmail")
         val userID = currentIntent.getStringExtra("userID")
-        val destIntent = Intent(baseContext, HomeActivity::class.java)
+        val destIntent = Intent(baseContext, ScanActivity::class.java)
         for (i in symptomsList.indices) {
             val p = symptomsList[i]
             val name = p.first
