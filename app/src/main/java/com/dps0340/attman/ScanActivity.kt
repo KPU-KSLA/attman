@@ -68,6 +68,7 @@ class ScanActivity : AppCompatActivity() {
     }
 
     val REQUEST_IMAGE_CAPTURE = 1
+    val REQUEST_QR_CAPTURE = 2
 
     private fun galleryAddPic() {
         Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
@@ -137,6 +138,9 @@ class ScanActivity : AppCompatActivity() {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             galleryAddPic()
         }
+        if (requestCode == REQUEST_QR_CAPTURE && resultCode == RESULT_OK) {
+            galleryAddPic()
+        }
     }
 
     private fun parseFloatWithCallback(path: String, successCallback: (String)->Unit, failureCallback: ()->Unit): Unit {
@@ -184,6 +188,10 @@ class ScanActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun dispatchQRIntent() {
+
     }
 
     private fun makeCompletable() {
