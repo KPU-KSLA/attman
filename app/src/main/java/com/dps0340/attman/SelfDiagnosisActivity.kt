@@ -70,12 +70,6 @@ class SelfDiagnosisActivity : AppCompatActivity() {
         flags[idx] = flag
     }
 
-
-
-
-
-
-
     fun call() {
         if(flags.any{ e -> e == 0 }) {
             return
