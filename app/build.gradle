@@ -62,4 +62,5 @@ repositories {
 }
 androidExtensions {
     features = ["parcelize"]
+    experimental = true
 }

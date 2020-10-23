@@ -17,6 +17,7 @@ import androidx.core.content.FileProvider
 import com.google.gson.Gson
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
+import kotlinx.android.synthetic.main.activity_scan.*
 import org.jetbrains.anko.toast
 import java.io.File
 import java.io.IOException
