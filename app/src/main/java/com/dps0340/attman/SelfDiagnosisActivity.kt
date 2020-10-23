@@ -10,6 +10,7 @@ import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
@@ -36,6 +37,7 @@ class SelfDiagnosisActivity : AppCompatActivity() {
     private val flags = (symptomsList.indices).map {
         0
     }.toMutableList()
+    private val regexPattern = "[+-]?([0-9]*[.])?[0-9]+\n".toRegex()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.selfdiagnosis_xml)
@@ -97,17 +99,23 @@ class SelfDiagnosisActivity : AppCompatActivity() {
         }
     }
 
-    private fun parseFloatWithCallback(path: String, callBack: (String)->Unit): Unit {
+    private fun parseFloatWithCallback(path: String, successCallback: (String)->Unit, failureCallback: ()->Unit): Unit {
         val image = InputImage.fromFilePath(this, Uri.fromFile(File(path)))
         val recognizer = TextRecognition.getClient()
         recognizer.process(image).addOnSuccessListener { visionText -> run {
-                try {
-                    callBack(visionText.text)
-                } catch (e: Exception) {
-                }
+            Log.i("RECOGNIZER", "Original Text: $visionText.text")
+            val find = regexPattern.find(visionText.text)
+            find?.let {
+                Log.i("RECOGNIZER", "Parsed Decimal: $visionText.text")
+                successCallback(visionText.text)
+            } ?: run {
+                Log.i("RECOGNIZER", "Couldn't find Parsed Decimal")
+                failureCallback()
             }
-        }.addOnFailureListener {
-
+        }
+        }.addOnFailureListener { _ -> run {
+                failureCallback()
+            }
         }
     }
 
@@ -119,24 +127,31 @@ class SelfDiagnosisActivity : AppCompatActivity() {
             MediaScannerConnection.scanFile(this, arrayOf(f.toString()),
             arrayOf(f.name)) { path, uri ->
                 run {
-                    val callBack = { s: String ->
+                    val failureCallback = { ->
+                        run {
+                            toast("체온이 식별되지 않았습니다.")
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                dispatchTakePictureIntent(intent)
+                            }, 2000)
+                            return@run
+                        }
+                    }
+                    val successCallback = { s: String ->
                         run {
                             try {
                                 val num = s.toDouble()
                                 if (25.0 > num || 45.0 < num) {
-                                    toast("체온이 식별되지 않았습니다.")
-                                    Handler(Looper.getMainLooper()).postDelayed({
-                                        dispatchTakePictureIntent(intent)
-                                    }, 2000)
-                                    return@run
+                                    throw InputMismatchException()
                                 }
                                 callBackIntent.putExtra("temp", num)
                                 callBackIntent.putExtra("imgUri", uri)
                                 startActivity(callBackIntent)
-                            }  catch (e: Exception) { }
+                            }  catch (e: Exception) {
+                                failureCallback()
+                            }
                         }
                     }
-                        parseFloatWithCallback(path, callBack)
+                        parseFloatWithCallback(path, successCallback, failureCallback)
                 }
 
             }
