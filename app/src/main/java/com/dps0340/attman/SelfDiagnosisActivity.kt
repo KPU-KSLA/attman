@@ -25,7 +25,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class SelfdiagnosisActivity : AppCompatActivity() {
+class SelfDiagnosisActivity : AppCompatActivity() {
     private val englishSymptoms = arrayOf("Cough", "Fever", "Throat discomfort", "Headache", "Nasal congestion")
     private val koreanSymptoms = arrayOf("기침", "37.5도 이상 열 또는 발열감", "인후통", "두통", "코막힘")
     private var preparedIntent: Intent? = null

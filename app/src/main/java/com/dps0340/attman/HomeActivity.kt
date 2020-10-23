@@ -22,7 +22,7 @@ class HomeActivity : AppCompatActivity() {
             val userNumber = currentIntent.getStringExtra("userNumber")
             val userEmail = currentIntent.getStringExtra("userEmail")
             val userID = currentIntent.getStringExtra("userID")
-            val intent = Intent(this@HomeActivity, SelfdiagnosisActivity::class.java)
+            val intent = Intent(this@HomeActivity, SelfDiagnosisActivity::class.java)
             intent.putExtra("userName", userName)
             intent.putExtra("userNumber", userNumber)
             intent.putExtra("userID", userID)

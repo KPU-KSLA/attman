@@ -47,7 +47,7 @@
         <activity android:name="HomeActivity"
             android:label="HomeActivity">
         </activity>
-        <activity android:name="SelfdiagnosisActivity"
+        <activity android:name="SelfDiagnosisActivity"
             android:label="SelfdiagnosisActivity">
         </activity>
         <activity android:name="AttendancecheckActivity"
