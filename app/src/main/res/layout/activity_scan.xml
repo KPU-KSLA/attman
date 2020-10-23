@@ -22,7 +22,7 @@
             android:layout_marginTop="350dp" />
 
     <Button
-            android:text="QR 인식 하러가기 - 선택"
+            android:text="QR 인식 하러가기"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:id="@+id/QRButton"

@@ -35,6 +35,8 @@ class ScanActivity : AppCompatActivity() {
     private lateinit var OCRButton: Button
     private lateinit var QRButton: Button
     private lateinit var FinishButton: Button
+    private var QRCompleted = false
+    private var OCRCompleted = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +71,13 @@ class ScanActivity : AppCompatActivity() {
             dispatchQRIntent()
         }
         FinishButton.setOnClickListener {
-            toast("먼저 체온계 인식을 수행해 주세요.")
+            if(OCRCompleted && QRCompleted) {
+                val timeStamp = Timestamp(System.currentTimeMillis())
+                preparedIntent.putExtra("time", timeStamp)
+                startActivity(preparedIntent)
+            } else {
+                toast("먼저 인식을 수행해 주세요.")
+            }
         }
     }
 
@@ -100,15 +108,11 @@ class ScanActivity : AppCompatActivity() {
                                 }
                                 preparedIntent.putExtra("temp", num)
                                 preparedIntent.putExtra("imgUri", uri)
-                                makeCompletable()
+                                OCRCompleted = true
                                 makeCompleteText(OCRButton)
+                                checkCompletableAndIfEditText()
                                 OCRButton.setOnClickListener {
                                     toast("이미 완료되었습니다.")
-                                }
-                                FinishButton.setOnClickListener {
-                                    val timeStamp = Timestamp(System.currentTimeMillis())
-                                    preparedIntent.putExtra("time", timeStamp)
-                                    startActivity(preparedIntent)
                                 }
                                 return@run
                             }  catch (e: Exception) {
@@ -199,15 +203,19 @@ class ScanActivity : AppCompatActivity() {
     }
 
     private fun processQRResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+        val result = IntentIntegrator.parseActivityResult(resultCode, data)
         if (result == null || result.contents == null) {
             toast("QR코드를 다시 스캔하여 주세요")
+            super.onActivityResult(requestCode, resultCode, data)
             return
         }
+        super.onActivityResult(requestCode, resultCode, data)
         longToast("Scanned Text: $result.contents")
         val content = result.contents
         preparedIntent.putExtra("qr", content)
+        OCRCompleted = true
         makeCompleteText(QRButton)
+        checkCompletableAndIfEditText()
         QRButton.setOnClickListener {
             toast("이미 완료되었습니다.")
         }
@@ -217,8 +225,10 @@ class ScanActivity : AppCompatActivity() {
         IntentIntegrator(this).setRequestCode(REQUEST_QR_CAPTURE).initiateScan()
     }
 
-    private fun makeCompletable() {
-        FinishButton.text = complete
+    private fun checkCompletableAndIfEditText() {
+        if(OCRCompleted && QRCompleted) {
+            FinishButton.text = complete
+        }
     }
 
     private fun makeCompleteText(button: Button) {
