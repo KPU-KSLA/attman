@@ -15,7 +15,7 @@ import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 
-class QrcodescanActivity : AppCompatActivity() {
+class QRCodeScanActivity : AppCompatActivity() {
     private var edt: EditText? = null
     private var edt2: TextView? = null
     private var image_check: ImageView? = null

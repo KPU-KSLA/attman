@@ -21,7 +21,7 @@ class AttendancecheckActivity : AppCompatActivity() {
             val userNumber = intent2.getStringExtra("userNumber")
             val userEmail = intent2.getStringExtra("userEmail")
             val userID = intent2.getStringExtra("userID")
-            val intent = Intent(this@AttendancecheckActivity, QrcodescanActivity::class.java)
+            val intent = Intent(this@AttendancecheckActivity, QRCodeScanActivity::class.java)
             intent.putExtra("userName", userName)
             intent.putExtra("userNumber", userNumber)
             intent.putExtra("userID", userID)

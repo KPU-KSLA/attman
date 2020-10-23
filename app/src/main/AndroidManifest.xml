@@ -80,7 +80,7 @@
                 android:name=".PrivacyActivity"
                 android:label="PrivacyActivity"></activity>
         <activity
-                android:name=".QrcodescanActivity"
+                android:name=".QRCodeScanActivity"
                 android:label="QrcodescanActivity"></activity>
         <activity
                 android:name=".AttendancestatusActivity"
