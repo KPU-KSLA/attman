@@ -29,7 +29,6 @@ import java.util.*
 class SelfDiagnosisActivity : AppCompatActivity() {
     private val englishSymptoms = arrayOf("Cough", "Fever", "Throat discomfort", "Headache", "Nasal congestion")
     private val koreanSymptoms = arrayOf("기침", "37.5도 이상 열 또는 발열감", "인후통", "두통", "코막힘")
-    private var preparedIntent: Intent? = null
     private val symptomsList = englishSymptoms.zip(koreanSymptoms.zip(englishSymptoms)
     { k, e ->
         "${k}(${e})"
@@ -37,7 +36,6 @@ class SelfDiagnosisActivity : AppCompatActivity() {
     private val flags = (symptomsList.indices).map {
         0
     }.toMutableList()
-    private val regexPattern = "\\d+[.]\\d+".toRegex()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.selfdiagnosis_xml)
@@ -72,145 +70,36 @@ class SelfDiagnosisActivity : AppCompatActivity() {
         flags[idx] = flag
     }
 
-    private lateinit var currentPhotoPath: String
 
-    @SuppressLint("SimpleDateFormat")
-    @Throws(IOException::class)
-    private fun createImageFile(): File {
-        // Create an image file name
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile(
-                "JPEG_${timeStamp}_", /* prefix */
-                ".jpg", /* suffix */
-                storageDir /* directory */
-        ).apply {
-            // Save a file: path for use with ACTION_VIEW intents
-            currentPhotoPath = absolutePath
-        }
-    }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            preparedIntent?.let {
-                galleryAddPic(it)
-            }
-        }
-    }
 
-    private fun parseFloatWithCallback(path: String, successCallback: (String)->Unit, failureCallback: ()->Unit): Unit {
-        val image = InputImage.fromFilePath(this, Uri.fromFile(File(path)))
-        val recognizer = TextRecognition.getClient()
-        recognizer.process(image).addOnSuccessListener { visionText -> run {
-            Log.i("RECOGNIZER", "Original Text: ${visionText.text}")
-            val find = regexPattern.find(visionText.text)
-            if(find == null) {
-                Log.i("RECOGNIZER", "Couldn't find Parsed Decimal")
-                failureCallback()
-                return@run
-            }
-            val value = find.value
-            Log.i("RECOGNIZER", "Parsed Decimal: $value")
-            successCallback(value)
-        }
-        }.addOnFailureListener { _ -> run {
-                failureCallback()
-            }
-        }
-    }
 
-    val REQUEST_IMAGE_CAPTURE = 1
 
-    private fun galleryAddPic(callBackIntent: Intent) {
-        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
-            val f = File(currentPhotoPath)
-            MediaScannerConnection.scanFile(this, arrayOf(f.toString()),
-            arrayOf(f.name)) { path, uri ->
-                run {
-                    val failureCallback = { ->
-                        run {
-                            toast("체온이 식별되지 않았습니다.")
-                            Handler(Looper.getMainLooper()).postDelayed({
-                                call()
-                            }, 2000)
-                            return@run
-                        }
-                    }
-                    val successCallback = { s: String ->
-                        run {
-                            try {
-                                val num = s.toDouble()
-                                if (25.0 > num || 45.0 < num) {
-                                    throw InputMismatchException()
-                                }
-                                callBackIntent.putExtra("temp", num)
-                                callBackIntent.putExtra("imgUri", uri)
-                                startActivity(callBackIntent)
-                            }  catch (e: Exception) {
-                                failureCallback()
-                            }
-                        }
-                    }
-                        parseFloatWithCallback(path, successCallback, failureCallback)
-                }
-
-            }
-        }
-    }
-
-    val REQUEST_TAKE_PHOTO = 1
-
-    private fun dispatchTakePictureIntent(callbackIntent: Intent) {
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE_SECURE).also { takePictureIntent ->
-            // Ensure that there's a camera activity to handle the intent
-            takePictureIntent.resolveActivity(packageManager)?.also {
-                // Create the File where the photo should go
-                val photoFile: File? = try {
-                    createImageFile()
-                } catch (ex: IOException) {
-                    // Error occurred while creating the File
-                    null
-                }
-                // Continue only if the File was successfully created
-                photoFile?.also {
-                    val photoURI: Uri = FileProvider.getUriForFile(
-                            this,
-                            "com.example.android.fileprovider",
-                            it
-                    )
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                    startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
-                }
-            }
-        }
-    }
 
     fun call() {
         if(flags.any{ e -> e == 0 }) {
             return
         }
-        var intent = intent
-        val userName = intent.getStringExtra("userName")
-        val userNumber = intent.getStringExtra("userNumber")
-        val userEmail = intent.getStringExtra("userEmail")
-        val userID = intent.getStringExtra("userID")
-        intent = Intent(baseContext, ResultActivity::class.java)
+        val currentIntent = intent
+        val userName = currentIntent.getStringExtra("userName")
+        val userNumber = currentIntent.getStringExtra("userNumber")
+        val userEmail = currentIntent.getStringExtra("userEmail")
+        val userID = currentIntent.getStringExtra("userID")
+        val destIntent = Intent(baseContext, HomeActivity::class.java)
         for (i in symptomsList.indices) {
             val p = symptomsList[i]
             val name = p.first
             val flag = flags[i]
-            intent.putExtra(name, flag)
+            destIntent.putExtra(name, flag)
         }
-        intent.putExtra("userName", userName)
-        intent.putExtra("userNumber", userNumber)
-        intent.putExtra("userID", userID)
-        intent.putExtra("userEmail", userEmail)
+        destIntent.putExtra("userName", userName)
+        destIntent.putExtra("userNumber", userNumber)
+        destIntent.putExtra("userID", userID)
+        destIntent.putExtra("userEmail", userEmail)
         val isDangerous = flags.any { e -> e == 1 }
-        intent.putExtra("dangerous?", isDangerous)
+        destIntent.putExtra("dangerous?", isDangerous)
         val gson = Gson()
-        intent.putExtra("result", gson.toJson(flags))
-        preparedIntent = intent
-        dispatchTakePictureIntent(intent)
+        destIntent.putExtra("result", gson.toJson(flags))
+        startActivity(destIntent)
     }
 }

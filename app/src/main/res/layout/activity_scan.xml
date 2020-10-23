@@ -6,30 +6,53 @@
         android:layout_height="match_parent"
         android:background="#ffffffff">
 
-    <LinearLayout
-            android:orientation="horizontal"
+    <Button
+            android:text="체온계 인식 하러가기"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="60dp"
+            android:id="@+id/OCRButton"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:backgroundTint="#FF9800"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="350dp" />
 
-        <Button
-                android:text="Button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/button"
-                android:layout_weight="1"
-                android:layout_gravity="center"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="10dp" />
+    <Button
+            android:text="QR 인식 하러가기 - 선택"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:id="@+id/QRButton"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:backgroundTint="#03A9F4"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/OCRButton"
+            android:layout_marginBottom="200dp" />
 
-        <Button
-                android:text="Button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/button2"
-                android:layout_weight="1"
-                android:layout_gravity="center"
-                android:layout_marginRight="20dp"
-                android:layout_marginLeft="10dp" />
-    </LinearLayout>
+    <Button
+            android:text="완료!"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:id="@+id/FinishButton"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:backgroundTint="#673AB7"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/QRButton"
+            android:layout_marginBottom="100dp"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
