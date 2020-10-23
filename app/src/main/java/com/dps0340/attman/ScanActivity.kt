@@ -48,14 +48,14 @@ class ScanActivity : AppCompatActivity() {
 
         FinishButton.text = notFinished
 
-        val destIntent = Intent(baseContext, HomeActivity::class.java)
+        val destIntent = Intent(baseContext, ResultActivity::class.java)
         destIntent.putExtra("userName", userName)
         destIntent.putExtra("userNumber", userNumber)
         destIntent.putExtra("userID", userID)
         destIntent.putExtra("userEmail", userEmail)
         destIntent.putExtra("dangerous?", isDangerous)
+        destIntent.putExtra("result", resultJson)
         preparedIntent = destIntent
-        intent.putExtra("result", resultJson)
         OCRButton.setOnClickListener {
             dispatchTakePictureIntent()
         }
@@ -97,6 +97,9 @@ class ScanActivity : AppCompatActivity() {
                                 makeCompleteText(OCRButton)
                                 OCRButton.setOnClickListener {
                                     toast("이미 완료되었습니다.")
+                                }
+                                FinishButton.setOnClickListener {
+                                    startActivity(preparedIntent)
                                 }
                                 return@run
                             }  catch (e: Exception) {

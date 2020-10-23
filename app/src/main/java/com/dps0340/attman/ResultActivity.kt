@@ -41,6 +41,8 @@ class ResultActivity : AppCompatActivity() {
         val userID = intent.getStringExtra("userID")
         val isDangerous = intent.getBooleanExtra("dangerous?", false)
         val temp = intent.getDoubleExtra("temp", 0.0)
+        val tempView = findViewById<TextView>(R.id.temp)
+        tempView.text = temp.toString()
         val button = findViewById<Button>(R.id.btn)
         setButtonColor(button, isDangerous)
         setButtonText(button, isDangerous)
