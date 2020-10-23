@@ -132,7 +132,7 @@ class SelfDiagnosisActivity : AppCompatActivity() {
                         run {
                             toast("체온이 식별되지 않았습니다.")
                             Handler(Looper.getMainLooper()).postDelayed({
-                                dispatchTakePictureIntent(intent)
+                                call()
                             }, 2000)
                             return@run
                         }

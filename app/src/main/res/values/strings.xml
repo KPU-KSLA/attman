@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">KPU 출석관리</string>
     <string name="confirm_cases_search_url">https://m.search.naver.com/search.naver?sm=mtp_sug.top&amp;where=m&amp;query=%EC%BD%94%EB%A1%9C%EB%82%98+%ED%99%95%EC%A7%84%EC%9E%90&amp;acq=%EC%BD%94&amp;acr=1&amp;qdt=0</string>
+    <string name="title_activity_scan">ScanActivity</string>
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+    <string name="hello_world">Hello Square World!</string>
 </resources>
