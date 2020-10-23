@@ -37,7 +37,7 @@ class SelfDiagnosisActivity : AppCompatActivity() {
     private val flags = (symptomsList.indices).map {
         0
     }.toMutableList()
-    private val regexPattern = "[+-]?([0-9]*[.])?[0-9]+\n".toRegex()
+    private val regexPattern = "\\d+[.]\\d+".toRegex()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.selfdiagnosis_xml)
@@ -103,15 +103,16 @@ class SelfDiagnosisActivity : AppCompatActivity() {
         val image = InputImage.fromFilePath(this, Uri.fromFile(File(path)))
         val recognizer = TextRecognition.getClient()
         recognizer.process(image).addOnSuccessListener { visionText -> run {
-            Log.i("RECOGNIZER", "Original Text: $visionText.text")
+            Log.i("RECOGNIZER", "Original Text: ${visionText.text}")
             val find = regexPattern.find(visionText.text)
-            find?.let {
-                Log.i("RECOGNIZER", "Parsed Decimal: $visionText.text")
-                successCallback(visionText.text)
-            } ?: run {
+            if(find == null) {
                 Log.i("RECOGNIZER", "Couldn't find Parsed Decimal")
                 failureCallback()
+                return@run
             }
+            val value = find.value
+            Log.i("RECOGNIZER", "Parsed Decimal: $value")
+            successCallback(value)
         }
         }.addOnFailureListener { _ -> run {
                 failureCallback()
