@@ -3,14 +3,12 @@ package com.dps0340.attman
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import org.jetbrains.anko.backgroundColor
 
 
@@ -49,7 +47,8 @@ class ResultActivity : AppCompatActivity() {
         val nextActivity = if(isDangerous) EmergencyCall::class.java else HomeActivity::class.java
         val destIntent = Intent(baseContext, nextActivity)
         val gson = Gson()
-        val result = gson.fromJson<List<Int>>(intent.getStringExtra("result"), object: TypeToken<List<Int>>() {}.type)
+        val typeSignature = mutableMapOf<String, Boolean>()
+        val result = gson.fromJson<MutableMap<String, Boolean>>(intent.getStringExtra("result"), typeSignature.javaClass)
         val qr = intent.getStringExtra("qr") ?: ""
         uploadDB(userID, temp, isDangerous, result, time, qr)
         destIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -74,7 +73,7 @@ class ResultActivity : AppCompatActivity() {
         val selectedText = if (isDangerous) emergencyText else normalText
         button.text = selectedText
     }
-    private fun uploadDB(userID: String, temp: Double, isDangerous: Boolean, result: List<Int>, time: String, qr: String = "") {
+    private fun uploadDB(userID: String, temp: Double, isDangerous: Boolean, result: MutableMap<String, Boolean>, time: String, qr: String = "") {
         val ref = Firebase.database.reference.child("cases")
         val obj = ref.push()
         val key = obj.key

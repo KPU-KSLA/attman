@@ -10,7 +10,7 @@ data class Case(
     var userID: String = "",
     var temp: Double = 0.0,
     var isDangerous: Boolean = false,
-    var result: List<Int>,
+    var result: MutableMap<String, Boolean>,
     var time: String = "",
     var qr: String = ""
 ) : Parcelable
