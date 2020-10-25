@@ -48,7 +48,7 @@ class ResultActivity : AppCompatActivity() {
         val destIntent = Intent(baseContext, nextActivity)
         val gson = Gson()
         val typeSignature = mutableMapOf<String, Boolean>()
-        val result = gson.fromJson<MutableMap<String, Boolean>>(intent.getStringExtra("result"), typeSignature.javaClass)
+        val result = gson.fromJson(intent.getStringExtra("result"), typeSignature.javaClass)
         val qr = intent.getStringExtra("qr") ?: ""
         uploadDB(userID, temp, isDangerous, result, time, qr)
         destIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
