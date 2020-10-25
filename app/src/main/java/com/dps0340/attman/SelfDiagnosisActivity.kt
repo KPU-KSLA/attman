@@ -34,7 +34,7 @@ class SelfDiagnosisActivity : AppCompatActivity() {
         for(i in englishSymptoms.indices) {
             val symptom = englishSymptoms[i]
             flagMap[symptom] = false
-            visited[i] = false
+            visited.add(false)
         }
     }
 
