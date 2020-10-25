@@ -15,12 +15,12 @@ import org.jetbrains.anko.backgroundColor
 
 
 class ResultActivity : AppCompatActivity() {
-    val selections = listOf("아니오", "네")
-    val symptoms = listOf("cough", "through", "head", "high", "nose")
-    val red = "#ffff0000"
-    val green = "#ff228b22"
-    val normalText = "홈화면으로 바로가기"
-    val emergencyText = "긴급연락 바로가기"
+    private val selections = listOf("아니오", "네")
+    private val symptoms = listOf("cough", "through", "head", "high", "nose")
+    private val red = "#ffff0000"
+    private val green = "#ff228b22"
+    private val normalText = "홈화면으로 바로가기"
+    private val emergencyText = "긴급연락 바로가기"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
@@ -58,9 +58,9 @@ class ResultActivity : AppCompatActivity() {
         destIntent.putExtra("userNumber", userNumber)
         destIntent.putExtra("userID", userID)
         destIntent.putExtra("userEmail", userEmail)
-        button.setOnClickListener(View.OnClickListener { _ ->
+        button.setOnClickListener { _ ->
             startActivity(destIntent)
-        })
+        }
     }
     private fun markDiagnosed(): Unit {
         DianosedSingleton.obj.set(true)
@@ -77,8 +77,10 @@ class ResultActivity : AppCompatActivity() {
     private fun uploadDB(userID: String, temp: Double, isDangerous: Boolean, result: List<Int>, time: String, qr: String = "") {
         val ref = Firebase.database.reference.child("cases")
         val obj = ref.push()
-        val key = obj.key!!
-        val case = Case(userID, temp, isDangerous, result, time, qr)
-        ref.child(key).setValue(case)
+        val key = obj.key
+        key?.let {
+            val case = Case(userID, temp, isDangerous, result, time, qr)
+            ref.child(key).setValue(case)
+        }
     }
 }
