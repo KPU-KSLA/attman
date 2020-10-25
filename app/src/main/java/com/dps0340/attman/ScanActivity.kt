@@ -2,16 +2,13 @@ package com.dps0340.attman
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Color
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import android.view.View
 import android.widget.Button
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import com.google.mlkit.vision.common.InputImage

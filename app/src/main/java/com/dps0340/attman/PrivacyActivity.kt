@@ -21,9 +21,9 @@ class PrivacyActivity : AppCompatActivity() {
         val userNumber = intent.getStringExtra("userNumber")
         val userEmail = intent.getStringExtra("userEmail")
         val userID = intent.getStringExtra("userID")
-        tv_name.setText(userName)
-        tv_number.setText(userNumber)
-        tv_email.setText(userEmail)
-        tv_id.setText(userID)
+        tv_name.text = userName
+        tv_number.text = userNumber
+        tv_email.text = userEmail
+        tv_id.text = userID
     }
 }

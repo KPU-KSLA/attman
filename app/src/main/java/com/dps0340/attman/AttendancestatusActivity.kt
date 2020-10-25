@@ -46,8 +46,7 @@ class AttendancestatusActivity : AppCompatActivity() {
                         val hour = calendar[Calendar.HOUR_OF_DAY] // 시
                         val minute = calendar[Calendar.MINUTE] // 분
                         val second = calendar[Calendar.SECOND] // 초
-                        tv_time.setText("($hour:$minute:$second)"
-                        )
+                        tv_time.text = "($hour:$minute:$second)"
                     }
                     try {
                         sleep(1000) // 1000 ms = 1초
@@ -58,11 +57,11 @@ class AttendancestatusActivity : AppCompatActivity() {
             } // run()
         } // new Thread() { };
         thread.start()
-        tv_name.setText(userName)
-        tv_number.setText("[$userNumber]")
-        tv_week.setText(date_text)
-        tv_day.setText(formatData)
-        tv_attendanceInformation.setText("$attendanceInformation   $time 출석완료$count")
+        tv_name.text = userName
+        tv_number.text = "[$userNumber]"
+        tv_week.text = date_text
+        tv_day.text = formatData
+        tv_attendanceInformation.text = "$attendanceInformation   $time 출석완료$count"
 
         //SharedPreferences settings = getSharedPreferences(PREFS_NAME,0);
     }

@@ -1,6 +1,5 @@
 package com.dps0340.attman
 
-import android.graphics.drawable.ColorDrawable
 import android.view.View
 
 object ListenerFactory {

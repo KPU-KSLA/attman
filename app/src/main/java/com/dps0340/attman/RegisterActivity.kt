@@ -1,20 +1,18 @@
 package com.dps0340.attman
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import org.jetbrains.anko.toast
-import org.json.JSONException
-import org.json.JSONObject
 
 class RegisterActivity : AppCompatActivity() {
 
