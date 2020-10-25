@@ -14,14 +14,3 @@ data class Case(
     var time: String = "",
     var qr: String = ""
 ) : Parcelable
-
-fun Case.convertToMap(): MutableMap<String, Any> {
-    val map = mutableMapOf<String, Any>()
-    map["userID"] = userID
-    map["temp"] = temp
-    map["isDangerous"] = isDangerous
-    map["result"] = result
-    map["time"] = time
-    map["qr"] = qr
-    return map
-}
