@@ -81,7 +81,7 @@ class SelfDiagnosisActivity : AppCompatActivity() {
         destIntent.putExtra("userNumber", userNumber)
         destIntent.putExtra("userID", userID)
         destIntent.putExtra("userEmail", userEmail)
-        val isDangerous = flagMap.any { (k, v) -> v }
+        val isDangerous = flagMap.any { (_, v) -> v }
         destIntent.putExtra("dangerous?", isDangerous)
         val gson = Gson()
         destIntent.putExtra("result", gson.toJson(flagMap))
