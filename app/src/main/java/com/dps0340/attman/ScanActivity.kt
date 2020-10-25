@@ -213,7 +213,7 @@ class ScanActivity : AppCompatActivity() {
         longToast("Scanned Text: $result.contents")
         val content = result.contents
         preparedIntent.putExtra("qr", content)
-        OCRCompleted = true
+        QRCompleted = true
         makeCompleteText(QRButton)
         checkCompletableAndIfEditText()
         QRButton.setOnClickListener {
