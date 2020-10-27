@@ -79,7 +79,7 @@
                 android:name=".PrivacyActivity"
                 android:label="PrivacyActivity"></activity>
         <activity
-                android:name=".AttendancestatusActivity"
+                android:name=".AttendanceStatusActivity"
                 android:label="AttendancestatusActivity"></activity>
         <activity
                 android:name=".ResultActivity"

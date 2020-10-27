@@ -46,7 +46,7 @@ class HomeActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, "자기진단을 먼저 해주시기 바랍니다.", Toast.LENGTH_SHORT).show()
                 return@OnClickListener
             } else {
-                val destIntent = Intent(this@HomeActivity, AttendancecheckActivity::class.java)
+                val destIntent = Intent(this@HomeActivity, AttendanceStatusActivity::class.java)
                 destIntent.putExtra("userName", userName)
                 destIntent.putExtra("userNumber", userNumber)
                 destIntent.putExtra("userID", userID)

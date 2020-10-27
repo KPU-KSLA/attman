@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import java.text.SimpleDateFormat
 import java.util.*
 
-class AttendancestatusActivity : AppCompatActivity() {
+class AttendanceStatusActivity : AppCompatActivity() {
     //public static final String PREFS_NAME = "MyPrefs";
     private lateinit var tv_name: TextView
     private lateinit var tv_number: TextView
@@ -76,7 +76,7 @@ class AttendancestatusActivity : AppCompatActivity() {
         val attendanceInformation = intent2.getStringExtra("attendanceInformation")
         val time = intent2.getStringExtra("time")
         val count = intent2.getIntExtra("count", 0)
-        val intent = Intent(this@AttendancestatusActivity, AttendancecheckActivity::class.java)
+        val intent = Intent(this@AttendanceStatusActivity, AttendancecheckActivity::class.java)
         intent.putExtra("userName", userName)
         intent.putExtra("userNumber", userNumber)
         intent.putExtra("userID", userID)
