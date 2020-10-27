@@ -79,9 +79,6 @@
                 android:name=".PrivacyActivity"
                 android:label="PrivacyActivity"></activity>
         <activity
-                android:name=".QRCodeScanActivity"
-                android:label="QrcodescanActivity"></activity>
-        <activity
                 android:name=".AttendancestatusActivity"
                 android:label="AttendancestatusActivity"></activity>
         <activity

@@ -7,27 +7,10 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 
 class AttendancecheckActivity : AppCompatActivity() {
-    private lateinit var btn_qrcodescan: Button
     private lateinit var btn_attendancestatus: Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.attendancecheck_xml)
-
-        //버튼클릭시 qr코드 스캔화면으로 넘어가는 기능
-        btn_qrcodescan = findViewById(R.id.btn_qrcodescan)
-        btn_qrcodescan.setOnClickListener(View.OnClickListener {
-            val intent2 = intent
-            val userName = intent2.getStringExtra("userName")
-            val userNumber = intent2.getStringExtra("userNumber")
-            val userEmail = intent2.getStringExtra("userEmail")
-            val userID = intent2.getStringExtra("userID")
-            val intent = Intent(this@AttendancecheckActivity, QRCodeScanActivity::class.java)
-            intent.putExtra("userName", userName)
-            intent.putExtra("userNumber", userNumber)
-            intent.putExtra("userID", userID)
-            intent.putExtra("userEmail", userEmail)
-            startActivity(intent)
-        })
 
         //버튼클릭시 출석현황 화면으로 넘어가는 기능
         btn_attendancestatus = findViewById(R.id.btn_attendancestatus)
