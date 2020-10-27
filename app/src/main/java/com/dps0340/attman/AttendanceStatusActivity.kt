@@ -76,7 +76,7 @@ class AttendanceStatusActivity : AppCompatActivity() {
         val attendanceInformation = intent2.getStringExtra("attendanceInformation")
         val time = intent2.getStringExtra("time")
         val count = intent2.getIntExtra("count", 0)
-        val intent = Intent(this@AttendanceStatusActivity, AttendancecheckActivity::class.java)
+        val intent = Intent(this@AttendanceStatusActivity, HomeActivity::class.java)
         intent.putExtra("userName", userName)
         intent.putExtra("userNumber", userNumber)
         intent.putExtra("userID", userID)
