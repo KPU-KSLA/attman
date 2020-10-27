@@ -70,9 +70,6 @@
                 android:name=".SelfDiagnosisActivity"
                 android:label="SelfdiagnosisActivity"></activity>
         <activity
-                android:name=".AttendancecheckActivity"
-                android:label="AttendancecheckActivity"></activity>
-        <activity
                 android:name=".EmergencyCall"
                 android:label="Emergencycall"></activity>
         <activity
@@ -80,7 +77,7 @@
                 android:label="PrivacyActivity"></activity>
         <activity
                 android:name=".AttendanceStatusActivity"
-                android:label="AttendancestatusActivity"></activity>
+                android:label="AttendanceStatusActivity"></activity>
         <activity
                 android:name=".ResultActivity"
                 android:label="ResultActivity"></activity>
