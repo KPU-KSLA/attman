@@ -8,7 +8,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class AttendanceStatusActivity : AppCompatActivity() {
-    //public static final String PREFS_NAME = "MyPrefs";
     private lateinit var tv_name: TextView
     private lateinit var tv_number: TextView
     private lateinit var tv_week: TextView
@@ -16,7 +15,7 @@ class AttendanceStatusActivity : AppCompatActivity() {
     private lateinit var tv_time: TextView
     private lateinit var tv_attendanceInformation: TextView
 
-    //String attendanceInformation;
+    // 파이어베이스 연동 TODO
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.attendancestatus_xml)
