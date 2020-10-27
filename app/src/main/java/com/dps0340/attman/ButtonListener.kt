@@ -3,12 +3,10 @@ package com.dps0340.attman
 import android.graphics.drawable.ColorDrawable
 import android.view.View
 
-class ButtonListener(activity: SelfDiagnosisActivity, symptomIdx: Int, flag: Boolean, colorId: Int, mutualView: View?, mutualListener: ButtonListener?): View.OnClickListener {
-    val mutualView: View? = mutualView
-    var mutualListener: ButtonListener? = mutualListener
-    var clicked = false
+class ButtonListener(activity: SelfDiagnosisActivity, symptomIdx: Int, flag: Boolean, colorId: Int, val mutualView: View?, var mutualListener: ButtonListener?): View.OnClickListener {
+    private var clicked = false
         private set
-    val activity: SelfDiagnosisActivity = activity
+    private val activity: SelfDiagnosisActivity = activity
     val colorId = colorId
     val symptomIdx = symptomIdx
     val flag = flag
