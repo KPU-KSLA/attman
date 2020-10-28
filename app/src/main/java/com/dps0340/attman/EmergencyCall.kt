@@ -16,7 +16,7 @@ class EmergencyCall : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.emergencycall_xml)
 
-        for((number, idx) in telNumbers.zip(0..telNumbers.size)) {
+        for((number, idx) in telNumbers.zip(1..telNumbers.size)) {
             val call = findViewById<Button>(resources.getIdentifier("btn_call${idx}", "id", packageName))
             val dialogCall = findViewById<Button>(resources.getIdentifier("btn_dialogcall${idx}", "id", packageName))
             call.setOnClickListener { _ ->
