@@ -42,7 +42,7 @@ class AttendanceStatusActivity : AppCompatActivity() {
                     isDangerousView.text = listOf("위험하지 않음", "위험한 상태")[it.isDangerous.compareTo(false)]
                     val timeView = inflated.findViewById<TextView>(R.id.time)
                     val date = it.date
-                    timeView.text = timeView.toString() + date
+                    timeView.text = timeView.text.toString() + date
                     val qrView = inflated.findViewById<TextView>(R.id.qr)
                     qrView.text = it.qr
                     val checkByAdminView = inflated.findViewById<TextView>(R.id.checkByAdmin)
