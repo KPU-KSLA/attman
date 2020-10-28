@@ -34,6 +34,7 @@ class ScanActivity : AppCompatActivity() {
     private lateinit var FinishButton: Button
     private var QRCompleted = false
     private var OCRCompleted = false
+    private val englishSymptoms = arrayOf("Cough", "Fever", "Throat discomfort", "Headache", "Nasal congestion")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +55,10 @@ class ScanActivity : AppCompatActivity() {
         FinishButton.text = notFinished
 
         val destIntent = Intent(baseContext, ResultActivity::class.java)
+        englishSymptoms.forEach {
+            val flag = currentIntent.getBooleanExtra(it, false)
+            destIntent.putExtra(it, flag)
+        }
         destIntent.putExtra("userName", userName)
         destIntent.putExtra("userNumber", userNumber)
         destIntent.putExtra("userID", userID)
