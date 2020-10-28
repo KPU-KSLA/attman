@@ -78,7 +78,7 @@ class ResultActivity : AppCompatActivity() {
         val obj = ref.push()
         val key = obj.key
         key?.let {
-            val case = Case(userID, temp, isDangerous, result, time, qr)
+            val case = Case(userID, temp, isDangerous, result, time, qr, false)
             ref.child(key).setValue(case)
         }
     }

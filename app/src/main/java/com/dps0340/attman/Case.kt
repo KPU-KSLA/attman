@@ -12,5 +12,6 @@ data class Case(
     var isDangerous: Boolean = false,
     var result: MutableMap<String, Boolean>,
     var time: String = "",
-    var qr: String = ""
+    var qr: String = "",
+    var checkedByAdmin: Boolean = false
 ) : Parcelable
