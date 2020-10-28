@@ -77,8 +77,8 @@ class SelfDiagnosisActivity : AppCompatActivity() {
         val userEmail = currentIntent.getStringExtra("userEmail")
         val userID = currentIntent.getStringExtra("userID")
         val destIntent = Intent(baseContext, ScanActivity::class.java)
-        englishSymptoms.zip(visited).forEach {
-            destIntent.putExtra(it.first, it.second)
+        flagMap.forEach {
+            destIntent.putExtra(it.key, it.value)
         }
         destIntent.putExtra("userName", userName)
         destIntent.putExtra("userNumber", userNumber)
