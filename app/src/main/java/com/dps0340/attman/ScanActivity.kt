@@ -69,7 +69,7 @@ class ScanActivity : AppCompatActivity() {
         }
         FinishButton.setOnClickListener {
             if(OCRCompleted && QRCompleted) {
-                val timeStamp = Timestamp(System.currentTimeMillis())
+                val timeStamp = Timestamp(System.currentTimeMillis()).toString()
                 preparedIntent.putExtra("time", timeStamp)
                 startActivity(preparedIntent)
             } else {
