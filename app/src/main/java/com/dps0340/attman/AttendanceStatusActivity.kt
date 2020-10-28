@@ -2,8 +2,16 @@ package com.dps0340.attman
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
+import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -19,50 +27,41 @@ class AttendanceStatusActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.attendancestatus_xml)
-        tv_name = findViewById(R.id.tv_name6)
-        tv_number = findViewById(R.id.tv_number6)
-        tv_week = findViewById(R.id.tv_week)
-        tv_day = findViewById(R.id.tv_day)
-        tv_time = findViewById(R.id.tv_time)
-        tv_attendanceInformation = findViewById(R.id.tv_attendanceInformation)
-        val intent = intent
-        val userName = intent.getStringExtra("userName")
-        val userNumber = intent.getStringExtra("userNumber")
-        val attendanceInformation = intent.getStringExtra("attendanceInformation")
-        val time = intent.getStringExtra("time")
-        val count = intent.getIntExtra("count", 0)
-        val currenTime = Calendar.getInstance().time
-        val date_text = SimpleDateFormat("EE요일", Locale.getDefault()).format(currenTime)
-        val now = System.currentTimeMillis()
-        val date = Date(now)
-        val sdfNow = SimpleDateFormat("yyyy-MM-dd")
-        val formatData = sdfNow.format(date)
-        val thread: Thread = object : Thread() {
-            override fun run() {
-                while (!isInterrupted) {
-                    runOnUiThread {
-                        val calendar = Calendar.getInstance() // 칼렌다 변수
-                        val hour = calendar[Calendar.HOUR_OF_DAY] // 시
-                        val minute = calendar[Calendar.MINUTE] // 분
-                        val second = calendar[Calendar.SECOND] // 초
-                        tv_time.text = "($hour:$minute:$second)"
-                    }
-                    try {
-                        sleep(1000) // 1000 ms = 1초
-                    } catch (e: InterruptedException) {
-                        e.printStackTrace()
-                    }
-                } // while
-            } // run()
-        } // new Thread() { };
-        thread.start()
-        tv_name.text = userName
-        tv_number.text = "[$userNumber]"
-        tv_week.text = date_text
-        tv_day.text = formatData
-        tv_attendanceInformation.text = "$attendanceInformation   $time 출석완료$count"
+        val database = Firebase.database
+        val statusLayout = findViewById<LinearLayout>(R.id.StatusLayout)
+        val inflater = layoutInflater
+        val updateListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val case: Case? = dataSnapshot.getValue<Case>()
+                case?.let {
+                    inflater.inflate(R.layout.attendance_history_prefab, statusLayout)
+                    val inflated = statusLayout.getChildAt(statusLayout.childCount - 1)
+                    val userIDView = inflated.findViewById<TextView>(R.id.userID)
+                    userIDView.text = userIDView.text.toString() + it.userID
+                    val tempView = inflated.findViewById<TextView>(R.id.temp)
+                    tempView.text = tempView.text.toString() + it.temp.toString()
+                    val isDangerousView = inflated.findViewById<TextView>(R.id.isDangerous)
+                    isDangerousView.text = listOf("위험하지 않음", "위험한 상태")[it.isDangerous.compareTo(false)]
+                    val timeView = inflated.findViewById<TextView>(R.id.time)
+                    val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                    formatter.timeZone = TimeZone.getTimeZone("UTC")
+                    val date = formatter.format(Date(it.time.toLong()))
+                    timeView.text = timeView.toString() + date.toString()
+                    val qrView = inflated.findViewById<TextView>(R.id.qr)
+                    qrView.text = it.qr
+                    val checkByAdminView = inflated.findViewById<TextView>(R.id.checkByAdmin)
+                    checkByAdminView.text = checkByAdminView.text.toString() + listOf("받지 않음", "받음")[it.isDangerous.compareTo(false)]
+                }
+            }
 
-        //SharedPreferences settings = getSharedPreferences(PREFS_NAME,0);
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.w("FIREBASE", "matchListener:onCancelled", databaseError.toException())
+                // ...
+            }
+        }
+        val casesRef = database.reference.child("cases")
+        casesRef.addListenerForSingleValueEvent(updateListener)
     }
 
     //백버튼을 눌렀을때 기능
