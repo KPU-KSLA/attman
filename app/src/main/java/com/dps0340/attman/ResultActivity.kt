@@ -20,6 +20,7 @@ import org.jetbrains.anko.backgroundColor
 class ResultActivity : AppCompatActivity() {
     private val selections = listOf("아니오", "네")
     private val symptoms = listOf("cough", "through", "head", "high", "nose")
+    private val englishSymptoms = arrayOf("Cough", "Fever", "Throat discomfort", "Headache", "Nasal congestion")
     private val red = "#ffff0000"
     private val green = "#ff228b22"
     private val normalText = "홈화면으로 바로가기"
@@ -30,12 +31,12 @@ class ResultActivity : AppCompatActivity() {
         val tv_name = findViewById<TextView>(R.id.tv_name7)
         val userName = intent.getStringExtra("userName")
         tv_name.text = userName
-        val answers = symptoms.map{ s -> intent.getIntExtra(s, 0)}
+        val answers = englishSymptoms.map{ s -> intent.getBooleanExtra(s, false)}
         for((a, s) in answers.zip(symptoms))
         {
             val id = resources.getIdentifier(s, "id", packageName)
             val view = findViewById<TextView>(id)
-            view.text = selections[a]
+            view.text = selections[a.compareTo(false)]
         }
         val userNumber = intent.getStringExtra("userNumber")
         val userEmail = intent.getStringExtra("userEmail")
@@ -43,6 +44,7 @@ class ResultActivity : AppCompatActivity() {
         val isDangerous = intent.getBooleanExtra("dangerous?", false)
         val temp = intent.getDoubleExtra("temp", 0.0)
         val date = intent.getStringExtra("date") ?: ""
+        val qr = intent.getStringExtra("qr") ?: ""
         val tempView = findViewById<TextView>(R.id.temp)
         tempView.text = temp.toString()
         val button = findViewById<Button>(R.id.btn)
@@ -53,7 +55,6 @@ class ResultActivity : AppCompatActivity() {
         val gson = Gson()
         val typeSignature = mutableMapOf<String, Boolean>()
         val result = gson.fromJson(intent.getStringExtra("result"), typeSignature.javaClass)
-        val qr = intent.getStringExtra("qr") ?: ""
         markDiagnosed(userID)
         uploadDB(userID, temp, isDangerous, result, date, qr)
         destIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
