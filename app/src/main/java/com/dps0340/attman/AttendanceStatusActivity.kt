@@ -21,7 +21,6 @@ class AttendanceStatusActivity : AppCompatActivity() {
     private lateinit var tv_time: TextView
     private lateinit var tv_attendanceInformation: TextView
 
-    // 파이어베이스 연동 TODO
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.attendancestatus_xml)
@@ -47,7 +46,7 @@ class AttendanceStatusActivity : AppCompatActivity() {
                         val qrView = inflated.findViewById<TextView>(R.id.qr)
                         qrView.text = it.qr
                         val checkByAdminView = inflated.findViewById<TextView>(R.id.checkByAdmin)
-                        checkByAdminView.text = "${checkByAdminView.text}${listOf("받지 않음", "받음")[it.isDangerous.compareTo(false)]}"
+                        checkByAdminView.text = "${checkByAdminView.text}${listOf("받지 않음", "받음")[it.checkedByAdmin.compareTo(false)]}"
                     }
                 }
             }
