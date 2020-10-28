@@ -166,6 +166,7 @@ class ScanActivity : AppCompatActivity() {
             val value = find.value
             Log.i("RECOGNIZER", "Parsed Decimal: $value")
             successCallback(value)
+            File(path).delete()
         }
         }.addOnFailureListener { _ -> run {
             failureCallback()
@@ -207,7 +208,7 @@ class ScanActivity : AppCompatActivity() {
             return
         }
         super.onActivityResult(requestCode, resultCode, data)
-        longToast("Scanned Text: $result.contents")
+//        longToast("Scanned Text: $result.contents")
         val content = result.contents
         preparedIntent.putExtra("qr", content)
         QRCompleted = true
