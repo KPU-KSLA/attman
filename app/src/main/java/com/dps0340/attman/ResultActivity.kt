@@ -3,10 +3,16 @@ package com.dps0340.attman
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import org.jetbrains.anko.backgroundColor
@@ -22,7 +28,6 @@ class ResultActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
-        markDiagnosed()
         val tv_name = findViewById<TextView>(R.id.tv_name7)
         val userName = intent.getStringExtra("userName")
         tv_name.text = userName
@@ -50,6 +55,7 @@ class ResultActivity : AppCompatActivity() {
         val typeSignature = mutableMapOf<String, Boolean>()
         val result = gson.fromJson(intent.getStringExtra("result"), typeSignature.javaClass)
         val qr = intent.getStringExtra("qr") ?: ""
+        markDiagnosed(userID)
         uploadDB(userID, temp, isDangerous, result, time, qr)
         destIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         destIntent.putExtra("dangerous?", isDangerous)
@@ -61,8 +67,24 @@ class ResultActivity : AppCompatActivity() {
             startActivity(destIntent)
         }
     }
-    private fun markDiagnosed(): Unit {
-        DianosedSingleton.obj.set(true)
+    private fun markDiagnosed(userID: String): Unit {
+        val userRef = Firebase.database.getReference("userinfos/$userID")
+        val isSelfDiagnosedListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val userinfo: UserInfo? = dataSnapshot.getValue<UserInfo>()
+                userinfo?.let {
+                    userinfo.selfDiagnosed = true
+                    userRef.setValue(userinfo)
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.w("FIREBASE", "matchListener:onCancelled", databaseError.toException())
+                // ...
+            }
+        }
+        userRef.addListenerForSingleValueEvent(isSelfDiagnosedListener)
     }
     private fun setButtonColor(button: Button, isDangerous: Boolean): Unit {
         val selectedColorString = if (isDangerous) red else green

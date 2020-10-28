@@ -3,13 +3,22 @@ package com.dps0340.attman
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
+import com.google.firebase.ktx.Firebase
+import java.text.SimpleDateFormat
+import java.util.*
 
 class HomeActivity : AppCompatActivity() {
-    private val diagnosedHolder = DianosedSingleton.obj
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_xml)
@@ -41,21 +50,35 @@ class HomeActivity : AppCompatActivity() {
             val attendanceInformation = currentIntent.getStringExtra("attendanceInformation")
             val time = currentIntent.getStringExtra("time")
             val count = currentIntent.getIntExtra("count", 0)
-            val diagnosed = diagnosedHolder.get()
-            if (!diagnosed) {
-                Toast.makeText(applicationContext, "자기진단을 먼저 해주시기 바랍니다.", Toast.LENGTH_SHORT).show()
-                return@OnClickListener
-            } else {
-                val destIntent = Intent(this@HomeActivity, AttendanceStatusActivity::class.java)
-                destIntent.putExtra("userName", userName)
-                destIntent.putExtra("userNumber", userNumber)
-                destIntent.putExtra("userID", userID)
-                destIntent.putExtra("userEmail", userEmail)
-                destIntent.putExtra("attendanceInformation", attendanceInformation)
-                destIntent.putExtra("time", time)
-                destIntent.putExtra("count", count)
-                startActivity(destIntent)
+            val userRef = Firebase.database.getReference("userinfos/$userID")
+            val isSelfDiagnosedListener = object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val userinfo: UserInfo? = dataSnapshot.getValue<UserInfo>()
+                    userinfo?.let {
+                        if(!it.selfDiagnosed) {
+                            Toast.makeText(applicationContext, "자기진단을 먼저 해주시기 바랍니다.", Toast.LENGTH_SHORT).show()
+                            return
+                        } else {
+                                val destIntent = Intent(this@HomeActivity, AttendanceStatusActivity::class.java)
+                                destIntent.putExtra("userName", userName)
+                                destIntent.putExtra("userNumber", userNumber)
+                                destIntent.putExtra("userID", userID)
+                                destIntent.putExtra("userEmail", userEmail)
+                                destIntent.putExtra("attendanceInformation", attendanceInformation)
+                                destIntent.putExtra("time", time)
+                                destIntent.putExtra("count", count)
+                                startActivity(destIntent)
+                        }
+                    }
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Getting Post failed, log a message
+                    Log.w("FIREBASE", "matchListener:onCancelled", databaseError.toException())
+                    // ...
+                }
             }
+            userRef.addListenerForSingleValueEvent(isSelfDiagnosedListener)
         })
 
         //긴급연락 버튼을 클릭하면 긴급연락화면으로 전환

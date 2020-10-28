@@ -11,5 +11,6 @@ data class UserInfo(
         var password: String = "",
         var name: String = "",
         var stdNum: String = "",
-        var email: String = ""
+        var email: String = "",
+        var selfDiagnosed: Boolean = false
 ) : Parcelable
