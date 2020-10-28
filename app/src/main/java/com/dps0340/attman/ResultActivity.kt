@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -43,7 +42,7 @@ class ResultActivity : AppCompatActivity() {
         val userID = intent.getStringExtra("userID") ?: ""
         val isDangerous = intent.getBooleanExtra("dangerous?", false)
         val temp = intent.getDoubleExtra("temp", 0.0)
-        val time = intent.getStringExtra("time") ?: ""
+        val date = intent.getStringExtra("date") ?: ""
         val tempView = findViewById<TextView>(R.id.temp)
         tempView.text = temp.toString()
         val button = findViewById<Button>(R.id.btn)
@@ -56,7 +55,7 @@ class ResultActivity : AppCompatActivity() {
         val result = gson.fromJson(intent.getStringExtra("result"), typeSignature.javaClass)
         val qr = intent.getStringExtra("qr") ?: ""
         markDiagnosed(userID)
-        uploadDB(userID, temp, isDangerous, result, time, qr)
+        uploadDB(userID, temp, isDangerous, result, date, qr)
         destIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         destIntent.putExtra("dangerous?", isDangerous)
         destIntent.putExtra("userName", userName)
@@ -95,12 +94,12 @@ class ResultActivity : AppCompatActivity() {
         val selectedText = if (isDangerous) emergencyText else normalText
         button.text = selectedText
     }
-    private fun uploadDB(userID: String, temp: Double, isDangerous: Boolean, result: MutableMap<String, Boolean>, time: String, qr: String = "") {
+    private fun uploadDB(userID: String, temp: Double, isDangerous: Boolean, result: MutableMap<String, Boolean>, date: String, qr: String = "") {
         val ref = Firebase.database.reference.child("cases")
         val obj = ref.push()
         val key = obj.key
         key?.let {
-            val case = Case(userID, temp, isDangerous, result, time, qr, false)
+            val case = Case(userID, temp, isDangerous, result, date, qr, false)
             ref.child(key).setValue(case)
         }
     }

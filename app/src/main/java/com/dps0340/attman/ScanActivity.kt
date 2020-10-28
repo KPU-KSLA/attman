@@ -70,7 +70,7 @@ class ScanActivity : AppCompatActivity() {
         FinishButton.setOnClickListener {
             if(OCRCompleted && QRCompleted) {
                 val timeStamp = Timestamp(System.currentTimeMillis()).toString()
-                preparedIntent.putExtra("time", timeStamp)
+                preparedIntent.putExtra("date", timeStamp)
                 startActivity(preparedIntent)
             } else {
                 toast("먼저 인식을 수행해 주세요.")

@@ -12,8 +12,6 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
-import java.text.SimpleDateFormat
-import java.util.*
 
 class AttendanceStatusActivity : AppCompatActivity() {
     private lateinit var tv_name: TextView
@@ -43,10 +41,8 @@ class AttendanceStatusActivity : AppCompatActivity() {
                     val isDangerousView = inflated.findViewById<TextView>(R.id.isDangerous)
                     isDangerousView.text = listOf("위험하지 않음", "위험한 상태")[it.isDangerous.compareTo(false)]
                     val timeView = inflated.findViewById<TextView>(R.id.time)
-                    val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-                    formatter.timeZone = TimeZone.getTimeZone("UTC")
-                    val date = formatter.format(Date(it.time.toLong()))
-                    timeView.text = timeView.toString() + date.toString()
+                    val date = it.date
+                    timeView.text = timeView.toString() + date
                     val qrView = inflated.findViewById<TextView>(R.id.qr)
                     qrView.text = it.qr
                     val checkByAdminView = inflated.findViewById<TextView>(R.id.checkByAdmin)
