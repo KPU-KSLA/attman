@@ -30,23 +30,25 @@ class AttendanceStatusActivity : AppCompatActivity() {
         val inflater = layoutInflater
         val updateListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val case: Case? = dataSnapshot.getValue<Case>()
-                case?.let {
-                    inflater.inflate(R.layout.attendance_history_prefab, statusLayout)
-                    val inflated = statusLayout.getChildAt(statusLayout.childCount - 1)
-                    val userIDView = inflated.findViewById<TextView>(R.id.userID)
-                    userIDView.text = userIDView.text.toString() + it.userID
-                    val tempView = inflated.findViewById<TextView>(R.id.temp)
-                    tempView.text = tempView.text.toString() + it.temp.toString()
-                    val isDangerousView = inflated.findViewById<TextView>(R.id.isDangerous)
-                    isDangerousView.text = listOf("위험하지 않음", "위험한 상태")[it.isDangerous.compareTo(false)]
-                    val timeView = inflated.findViewById<TextView>(R.id.time)
-                    val date = it.date
-                    timeView.text = timeView.text.toString() + date
-                    val qrView = inflated.findViewById<TextView>(R.id.qr)
-                    qrView.text = it.qr
-                    val checkByAdminView = inflated.findViewById<TextView>(R.id.checkByAdmin)
-                    checkByAdminView.text = checkByAdminView.text.toString() + listOf("받지 않음", "받음")[it.isDangerous.compareTo(false)]
+                for (userSnapshot in dataSnapshot.children) {
+                    val case: Case? = userSnapshot.getValue<Case>()
+                    case?.let {
+                        inflater.inflate(R.layout.attendance_history_prefab, statusLayout)
+                        val inflated = statusLayout.getChildAt(statusLayout.childCount - 1)
+                        val userIDView = inflated.findViewById<TextView>(R.id.userID)
+                        userIDView.text = "${userIDView.text}${it.userID}"
+                        val tempView = inflated.findViewById<TextView>(R.id.temp)
+                        tempView.text = "${tempView.text}${it.temp}"
+                        val isDangerousView = inflated.findViewById<TextView>(R.id.isDangerous)
+                        isDangerousView.text = listOf("위험하지 않음", "위험한 상태")[it.isDangerous.compareTo(false)]
+                        val timeView = inflated.findViewById<TextView>(R.id.time)
+                        val date = it.date
+                        timeView.text = "${timeView.text}$date"
+                        val qrView = inflated.findViewById<TextView>(R.id.qr)
+                        qrView.text = it.qr
+                        val checkByAdminView = inflated.findViewById<TextView>(R.id.checkByAdmin)
+                        checkByAdminView.text = "${checkByAdminView.text}${listOf("받지 않음", "받음")[it.isDangerous.compareTo(false)]}"
+                    }
                 }
             }
 
@@ -58,6 +60,7 @@ class AttendanceStatusActivity : AppCompatActivity() {
         }
         val casesRef = database.reference.child("cases")
         casesRef.addListenerForSingleValueEvent(updateListener)
+        statusLayout.invalidate()
     }
 
     //백버튼을 눌렀을때 기능
