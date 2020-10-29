@@ -27,11 +27,15 @@ class AttendanceStatusActivity : AppCompatActivity() {
         val database = Firebase.database
         val statusLayout = findViewById<LinearLayout>(R.id.StatusLayout)
         val inflater = layoutInflater
+        val userID = intent.getStringExtra("userID") ?: ""
         val updateListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (userSnapshot in dataSnapshot.children) {
                     val case: Case? = userSnapshot.getValue<Case>()
                     case?.let {
+                        if(it.userID != userID) {
+                            return@let
+                        }
                         inflater.inflate(R.layout.attendance_history_prefab, statusLayout)
                         val inflated = statusLayout.getChildAt(statusLayout.childCount - 1)
                         val userIDView = inflated.findViewById<TextView>(R.id.userID)
