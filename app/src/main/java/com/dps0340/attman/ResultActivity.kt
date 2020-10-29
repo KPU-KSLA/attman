@@ -19,8 +19,8 @@ import org.jetbrains.anko.backgroundColor
 
 class ResultActivity : AppCompatActivity() {
     private val selections = listOf("아니오", "네")
-    private val symptoms = listOf("cough", "through", "head", "high", "nose")
-    private val englishSymptoms = listOf("Cough", "Fever", "Throat discomfort", "Headache", "Nasal congestion")
+    private val symptoms = listOf("cough", "high", "through", "head", "nose")
+    private val englishSymptoms = arrayOf("Cough", "Fever", "Throat discomfort", "Headache", "Nasal congestion")
     private val red = "#ffff0000"
     private val green = "#ff228b22"
     private val normalText = "홈화면으로 바로가기"
@@ -36,7 +36,8 @@ class ResultActivity : AppCompatActivity() {
         {
             val id = resources.getIdentifier(s, "id", packageName)
             val view = findViewById<TextView>(id)
-            view.text = selections[a.compareTo(false)]
+            val flag = if (a) 1 else 0
+            view.text = selections[flag]
         }
         val userNumber = intent.getStringExtra("userNumber")
         val userEmail = intent.getStringExtra("userEmail")
