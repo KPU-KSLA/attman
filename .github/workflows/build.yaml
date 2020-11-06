@@ -8,7 +8,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Inject Firebase Test Token
         env:
-          $FIREBASE_TEST_TOKEN: ${{ secrets.FIREBASE_TEST_TOKEN }}
+          FIREBASE_TEST_TOKEN: ${{ secrets.FIREBASE_TEST_TOKEN }}
         run: echo $FIREBASE_TEST_TOKEN > ./app/google-services.json
       - name: Build the app
         run: ./gradlew build
