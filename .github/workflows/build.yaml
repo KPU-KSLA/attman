@@ -6,5 +6,7 @@ jobs:
     steps:
       - name: Checkout the code
         uses: actions/checkout@v2
+      - name: Inject Firebase Test Token
+        run: echo $FIREBASE_TEST_TOKEN > ./app/google-services.json
       - name: Build the app
         run: ./gradlew build
