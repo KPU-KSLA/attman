@@ -11,28 +11,28 @@ import com.google.gson.Gson
 
 
 class SelfDiagnosisActivity : AppCompatActivity() {
-    private val englishSymptoms = arrayOf("Cough", "Fever", "Throat discomfort", "Headache", "Nasal congestion")
-    private val koreanSymptoms = arrayOf("기침", "37.5도 이상 열 또는 발열감", "인후통", "두통", "코막힘")
-    private val symptomsList = englishSymptoms.zip(koreanSymptoms.zip(englishSymptoms)
-    { k, e ->
-        "${k}(${e})"
-    })
+    private val fullEnglishSymptoms = SYMPTOMS.englishFull
+    private val symptomsList = SYMPTOMS.mapped
     private val flagMap = mutableMapOf<String, Boolean>()
     private val visited = mutableListOf<Boolean>()
+    private lateinit var caller: Caller
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.selfdiagnosis_xml)
-        val textView = findViewById<TextView>(R.id.tv_name5)!!
-        val intent = intent
+        caller = ScanActivityCaller(visited, intent, flagMap)
         val userName = intent.getStringExtra("userName")
-        textView.text = userName
+        userName?.let {
+            findViewById<TextView>(R.id.tv_name5)?.let {
+                it.text = userName
+            }
+        }
         constructFlagMap()
         inflateSymptomsLayout()
     }
 
     private fun constructFlagMap() {
-        for(i in englishSymptoms.indices) {
-            val symptom = englishSymptoms[i]
+        for(i in fullEnglishSymptoms.indices) {
+            val symptom = fullEnglishSymptoms[i]
             flagMap[symptom] = false
             visited.add(false)
         }
@@ -62,32 +62,12 @@ class SelfDiagnosisActivity : AppCompatActivity() {
         if (flagMap.size <= idx) {
             return
         }
-        val symptom = englishSymptoms[idx]
+        val symptom = fullEnglishSymptoms[idx]
         visited[idx] = true
         flagMap[symptom] = flag
     }
 
     fun call() {
-        if(visited.any{ e -> !e }) {
-            return
-        }
-        val currentIntent = intent
-        val userName = currentIntent.getStringExtra("userName")
-        val userNumber = currentIntent.getStringExtra("userNumber")
-        val userEmail = currentIntent.getStringExtra("userEmail")
-        val userID = currentIntent.getStringExtra("userID")
-        val destIntent = Intent(baseContext, ScanActivity::class.java)
-        flagMap.forEach {
-            destIntent.putExtra(it.key, it.value)
-        }
-        destIntent.putExtra("userName", userName)
-        destIntent.putExtra("userNumber", userNumber)
-        destIntent.putExtra("userID", userID)
-        destIntent.putExtra("userEmail", userEmail)
-        val isDangerous = flagMap.any { (_, v) -> v }
-        destIntent.putExtra("dangerous?", isDangerous)
-        val gson = Gson()
-        destIntent.putExtra("result", gson.toJson(flagMap))
-        startActivity(destIntent)
+        caller.call(this)
     }
 }
