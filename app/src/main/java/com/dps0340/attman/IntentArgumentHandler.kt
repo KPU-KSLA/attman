@@ -3,7 +3,7 @@ package com.dps0340.attman
 import android.content.Intent
 import android.os.Parcelable
 
-object IntentArgumentGetter {
+object IntentArgumentHandler {
     fun getStrings(intent: Intent, names: List<String>) : Map<String, String> = names.map {
         it to (intent.getStringExtra(it) ?: "")
     }.toMap()

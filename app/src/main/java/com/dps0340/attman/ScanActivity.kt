@@ -14,11 +14,6 @@ import androidx.core.content.FileProvider
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.zxing.integration.android.IntentIntegrator
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 import java.io.File
 import java.io.IOException
@@ -49,13 +44,8 @@ class ScanActivity : AppCompatActivity() {
         FinishButton = findViewById<Button>(R.id.FinishButton)
 
         val currentIntent = intent
-        val userName = currentIntent.getStringExtra("userName")
-        val userNumber = currentIntent.getStringExtra("userNumber")
-        val userID = currentIntent.getStringExtra("userID")
-        val userEmail = currentIntent.getStringExtra("userEmail")
-        val isDangerous = currentIntent.getBooleanExtra("dangerous?", false)
-        val resultJson = currentIntent.getStringExtra("result")
-
+        val strings = IntentArgumentHandler.getStrings(currentIntent, INTENT_ARGUMENTS.strings)
+        val booleans = IntentArgumentHandler.getBooleans(currentIntent, INTENT_ARGUMENTS.booleans)
         FinishButton.text = notFinished
 
         val destIntent = Intent(baseContext, ResultActivity::class.java)
@@ -63,12 +53,8 @@ class ScanActivity : AppCompatActivity() {
             val flag = currentIntent.getBooleanExtra(it, false)
             destIntent.putExtra(it, flag)
         }
-        destIntent.putExtra("userName", userName)
-        destIntent.putExtra("userNumber", userNumber)
-        destIntent.putExtra("userID", userID)
-        destIntent.putExtra("userEmail", userEmail)
-        destIntent.putExtra("dangerous?", isDangerous)
-        destIntent.putExtra("result", resultJson)
+        IntentArgumentHandler.putStrings(currentIntent, strings)
+        IntentArgumentHandler.putBooleans(currentIntent, booleans)
         preparedIntent = destIntent
         OCRButton.setOnClickListener {
             dispatchTakePictureIntent()
@@ -166,23 +152,22 @@ class ScanActivity : AppCompatActivity() {
     private fun parseFloatWithCallback(path: String, successCallback: (String)->Unit, failureCallback: ()->Unit): Unit {
         val image = InputImage.fromFilePath(this, Uri.fromFile(File(path)))
         val recognizer = TextRecognition.getClient()
-        recognizer.process(image).addOnSuccessListener { visionText -> run {
-            Log.i("RECOGNIZER", "Original Text: ${visionText.text}")
-            val find = regexPattern.find(visionText.text)
-            if(find == null) {
-                Log.i("RECOGNIZER", "Couldn't find Parsed Decimal")
-                failureCallback()
-                return@run
-            }
-            val value = find.value
-            Log.i("RECOGNIZER", "Parsed Decimal: $value")
-            successCallback(value)
-            File(path).delete()
-        }
-        }.addOnFailureListener { _ -> run {
-            failureCallback()
-        }
-        }
+        recognizer.process(image)
+                .addOnSuccessListener { visionText -> run {
+                        Log.i("RECOGNIZER", "Original Text: ${visionText.text}")
+                        val find = regexPattern.find(visionText.text)
+                        if(find == null) {
+                            Log.i("RECOGNIZER", "Couldn't find Parsed Decimal")
+                            failureCallback()
+                            return@run
+                        }
+                        val value = find.value
+                        Log.i("RECOGNIZER", "Parsed Decimal: $value")
+                        successCallback(value)
+                        File(path).delete()
+                    }
+                }
+                .addOnFailureListener { run { failureCallback() } }
     }
     val REQUEST_TAKE_PHOTO = 1
 
@@ -219,7 +204,6 @@ class ScanActivity : AppCompatActivity() {
             return
         }
         super.onActivityResult(requestCode, resultCode, data)
-//        longToast("Scanned Text: $result.contents")
         val content = result.contents
         preparedIntent.putExtra("qr", content)
         QRCompleted = true

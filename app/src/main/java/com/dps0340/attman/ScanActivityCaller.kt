@@ -13,8 +13,8 @@ class ScanActivityCaller(visited: MutableList<Boolean>,
             return
         }
         val destIntent = Intent(activity.baseContext, ScanActivity::class.java)
-        val arguments = IntentArgumentGetter.getStrings(currentIntent, INTENT_ARGUMENTS.strings)
-        IntentArgumentGetter.putStrings(destIntent, arguments)
+        val arguments = IntentArgumentHandler.getStrings(currentIntent, INTENT_ARGUMENTS.strings)
+        IntentArgumentHandler.putStrings(destIntent, arguments)
         flags.forEach {
             destIntent.putExtra(it.key, it.value)
         }

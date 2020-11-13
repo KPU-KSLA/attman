@@ -14,12 +14,6 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 
 class AttendanceStatusActivity : AppCompatActivity() {
-    private lateinit var tv_name: TextView
-    private lateinit var tv_number: TextView
-    private lateinit var tv_week: TextView
-    private lateinit var tv_day: TextView
-    private lateinit var tv_time: TextView
-    private lateinit var tv_attendanceInformation: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,23 +62,13 @@ class AttendanceStatusActivity : AppCompatActivity() {
 
     //백버튼을 눌렀을때 기능
     override fun onBackPressed() {
-        val intent2 = intent
-        val userName = intent2.getStringExtra("userName")
-        val userNumber = intent2.getStringExtra("userNumber")
-        val userEmail = intent2.getStringExtra("userEmail")
-        val userID = intent2.getStringExtra("userID")
-        val attendanceInformation = intent2.getStringExtra("attendanceInformation")
-        val time = intent2.getStringExtra("time")
-        val count = intent2.getIntExtra("count", 0)
-        val intent = Intent(this@AttendanceStatusActivity, HomeActivity::class.java)
-        intent.putExtra("userName", userName)
-        intent.putExtra("userNumber", userNumber)
-        intent.putExtra("userID", userID)
-        intent.putExtra("userEmail", userEmail)
-        intent.putExtra("attendanceInformation", attendanceInformation)
-        intent.putExtra("time", time)
-        intent.putExtra("count", count)
-        startActivity(intent)
-        super.onBackPressed()
+        val currentIntent = intent
+        val strings = IntentArgumentHandler.getStrings(currentIntent, listOf("userName", "userNumber", "attendanceInformation", "time"))
+        val count = currentIntent.getIntExtra("count", 0)
+        val prevIntent = Intent()
+        IntentArgumentHandler.putStrings(prevIntent, strings)
+        prevIntent.putExtra("count", count)
+        setResult(RESULT_OK, prevIntent)
+        finish()
     }
 }
