@@ -125,14 +125,12 @@ class ScanActivity : AppCompatActivity() {
     }
 
     private fun galleryAddPic() {
-        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
-            val f = File(currentPhotoPath)
-            MediaScannerConnection.scanFile(this, arrayOf(f.toString()),
-                    arrayOf(f.name))
-            { path, uri ->
-                run {
-                    parseFloatWithCallback(path, successCallback(uri), failureCallback)
-                }
+        val f = File(currentPhotoPath)
+        MediaScannerConnection.scanFile(this, arrayOf(f.toString()),
+                arrayOf(f.name))
+        { path, uri ->
+            run {
+                parseFloatWithCallback(path, successCallback(uri), failureCallback)
             }
         }
     }
