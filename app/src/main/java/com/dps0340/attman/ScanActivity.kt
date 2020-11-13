@@ -14,6 +14,10 @@ import androidx.core.content.FileProvider
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.zxing.integration.android.IntentIntegrator
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 import java.io.File
@@ -86,45 +90,49 @@ class ScanActivity : AppCompatActivity() {
     val REQUEST_IMAGE_CAPTURE = 1
     val REQUEST_QR_CAPTURE = 2
 
+    val failureCallback = { ->
+        run {
+            toast("체온이 식별되지 않았습니다.")
+            return@run
+        }
+    }
+    val successCallback = { uri: Uri ->
+        // Partial application(Curring) 적용 함수
+        { s: String ->
+            run {
+                try {
+                    val num = s.toDouble()
+                    if (25.0 > num || 45.0 < num) {
+                        throw InputMismatchException()
+                    }
+                    if(32.0 > num || 38.0 < num) {
+                        intent.putExtra("dangerous?", true)
+                    }
+                    preparedIntent.putExtra("temp", num)
+                    preparedIntent.putExtra("imgUri", uri)
+                    OCRCompleted = true
+                    makeCompleteText(OCRButton)
+                    checkCompletableAndIfEditText()
+                    OCRButton.setOnClickListener {
+                        toast("이미 완료되었습니다.")
+                    }
+                    return@run
+                }  catch (e: Exception) {
+                    failureCallback()
+                }
+            }
+        }
+    }
+
     private fun galleryAddPic() {
         Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
             val f = File(currentPhotoPath)
             MediaScannerConnection.scanFile(this, arrayOf(f.toString()),
-                    arrayOf(f.name)) { path, uri ->
+                    arrayOf(f.name))
+            { path, uri ->
                 run {
-                    val failureCallback = { ->
-                        run {
-                            toast("체온이 식별되지 않았습니다.")
-                            return@run
-                        }
-                    }
-                    val successCallback = { s: String ->
-                        run {
-                            try {
-                                val num = s.toDouble()
-                                if (25.0 > num || 45.0 < num) {
-                                    throw InputMismatchException()
-                                }
-                                if(32.0 > num || 38.0 < num) {
-                                    intent.putExtra("dangerous?", true)
-                                }
-                                preparedIntent.putExtra("temp", num)
-                                preparedIntent.putExtra("imgUri", uri)
-                                OCRCompleted = true
-                                makeCompleteText(OCRButton)
-                                checkCompletableAndIfEditText()
-                                OCRButton.setOnClickListener {
-                                    toast("이미 완료되었습니다.")
-                                }
-                                return@run
-                            }  catch (e: Exception) {
-                                failureCallback()
-                            }
-                        }
-                    }
-                    parseFloatWithCallback(path, successCallback, failureCallback)
+                    parseFloatWithCallback(path, successCallback(uri), failureCallback)
                 }
-
             }
         }
     }
