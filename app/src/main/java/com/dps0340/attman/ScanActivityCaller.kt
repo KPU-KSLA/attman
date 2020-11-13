@@ -26,6 +26,10 @@ class ScanActivityCaller(visited: MutableList<Boolean>,
     }
 
     companion object {
+        /**
+         * if any key is true, returns true.
+         * true means the person is dangerous condition.
+         */
         fun isDangerous(flags: Map<String, Boolean>): Boolean = flags.any { (_, v) -> v}
     }
 }
