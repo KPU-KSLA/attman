@@ -28,6 +28,12 @@ android {
         exclude 'META-INF/INDEX.LIST'
         exclude 'versionchanges.txt'
     }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
