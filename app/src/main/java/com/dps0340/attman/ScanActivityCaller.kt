@@ -18,10 +18,12 @@ class ScanActivityCaller(visited: MutableList<Boolean>,
         flags.forEach {
             destIntent.putExtra(it.key, it.value)
         }
-        val isDangerous = flags.any { (_, v) -> v }
+        val isDangerous = isDangerous(flags)
         destIntent.putExtra("dangerous?", isDangerous)
         val gson = Gson()
         destIntent.putExtra("result", gson.toJson(flags))
         activity.startActivity(destIntent)
     }
+
+    fun isDangerous(flags: Map<String, Boolean>): Boolean = flags.any { (_, v) -> v}
 }
