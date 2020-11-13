@@ -45,13 +45,16 @@ class LoginActivity : AppCompatActivity() {
             val encryptedPassword = Sha512.encrypt(rawUserPassword)
             val matchListener = object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val user: UserInfo? = dataSnapshot.getValue<UserInfo>()
-                    user?.let {
+                    if(!dataSnapshot.exists()) {
+                        loginFailed()
+                        return
+                    }
+                    val user: UserInfo = dataSnapshot.getValue<UserInfo>()!!
+                    user.let {
                         if (it.id == userID && it.password == encryptedPassword) {
                             loginSuccess(it)
                         } else {
-                            toast("로그인 실패")
-                            return
+                            loginFailed()
                         }
                     }
                 }
@@ -63,12 +66,13 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
             val userRef = database.getReference("userinfos/$userID")
+            userRef
             userRef.addListenerForSingleValueEvent(matchListener)
         })
     }
 
     private fun loginSuccess(user: UserInfo) {
-        Toast.makeText(applicationContext, "로그인 성공", Toast.LENGTH_SHORT).show()
+        toast("로그인 성공")
         val intent = Intent(this@LoginActivity, HomeActivity::class.java)
         intent.putExtra("userID", user.id)
         intent.putExtra("userPassword", user.password)
@@ -76,6 +80,10 @@ class LoginActivity : AppCompatActivity() {
         intent.putExtra("userNumber", user.stdNum)
         intent.putExtra("userEmail", user.email)
         startActivity(intent)
+    }
+
+    private fun loginFailed() {
+        toast("로그인 실패")
     }
 
     private fun requestPermissions(): Unit {
