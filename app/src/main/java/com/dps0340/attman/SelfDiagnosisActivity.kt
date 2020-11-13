@@ -13,7 +13,7 @@ import com.google.gson.Gson
 class SelfDiagnosisActivity : AppCompatActivity() {
     private val fullEnglishSymptoms = SYMPTOMS.englishFull
     private val symptomsList = SYMPTOMS.mapped
-    private val flagMap = mutableMapOf<String, Boolean>()
+    internal val flagMap = mutableMapOf<String, Boolean>()
     private val visited = mutableListOf<Boolean>()
     private lateinit var caller: Caller
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +30,7 @@ class SelfDiagnosisActivity : AppCompatActivity() {
         inflateSymptomsLayout()
     }
 
-    private fun constructFlagMap() {
+    internal fun constructFlagMap() {
         for(i in fullEnglishSymptoms.indices) {
             val symptom = fullEnglishSymptoms[i]
             flagMap[symptom] = false

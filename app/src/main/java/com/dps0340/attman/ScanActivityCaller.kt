@@ -25,5 +25,7 @@ class ScanActivityCaller(visited: MutableList<Boolean>,
         activity.startActivity(destIntent)
     }
 
-    fun isDangerous(flags: Map<String, Boolean>): Boolean = flags.any { (_, v) -> v}
+    companion object {
+        fun isDangerous(flags: Map<String, Boolean>): Boolean = flags.any { (_, v) -> v}
+    }
 }
